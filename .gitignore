@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+
+# IDE
+.vscode/
+
+# Dados locais do app
+data/
+*.xlsx
+
+# Logs
+*.log

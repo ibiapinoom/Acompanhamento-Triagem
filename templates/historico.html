@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Histórico — Tratativas GPON</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="/static/algar.css">
+</head>
+<body>
+
+  <!-- ── TOPBAR ──────────────────────────────────────────── -->
+  <header class="topbar">
+    <div class="container">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Tratativas GPON</span>
+          <span class="brand-sub">Algar · Registro Técnico</span>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="/">Tratativa</a>
+        <a href="/historico" class="active">Histórico</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ── PAGE ────────────────────────────────────────────── -->
+  <main class="container page-content">
+
+    <!-- Page header + stat -->
+    <div class="page-header">
+      <div class="page-header-inner">
+        <div>
+          <h1 class="page-title">Histórico de Atendimentos</h1>
+          <p class="page-subtitle">Registros filtrados e produtividade por dia</p>
+        </div>
+        <div class="stat">
+          <div>
+            <div class="stat-num">{{ total }}</div>
+            <div class="stat-label">registros<br>no filtro</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hint -->
+    <div class="hint">
+      <span class="hint-dot"></span>
+      <span>Excel: <b>{{ excel_path }}</b></span>
+    </div>
+
+    <!-- Filter card -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+        <div>
+          <div class="card-title">Filtros</div>
+          <div class="card-subtitle">Refine por período, protocolo ou cliente</div>
+        </div>
+      </div>
+
+      <form method="get" action="/historico">
+        <div class="filter-bar">
+          <div class="field">
+            <label>Data inicial</label>
+            <input type="date" name="date_from" value="{{ filters.date_from }}">
+          </div>
+          <div class="field">
+            <label>Data final</label>
+            <input type="date" name="date_to" value="{{ filters.date_to }}">
+          </div>
+          <div class="field">
+            <label>Protocolo</label>
+            <input type="text" name="protocolo" value="{{ filters.protocolo }}" placeholder="Contém...">
+          </div>
+          <div class="field">
+            <label>Cliente</label>
+            <input type="text" name="cliente" value="{{ filters.cliente }}" placeholder="Contém...">
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn-primary" type="submit">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Buscar
+          </button>
+          <a class="btn-ghost" href="/historico" style="text-decoration:none; padding:11px 20px; border-radius:16px; font-size:14px; font-weight:600; display:inline-flex; align-items:center; gap:7px; color:var(--text-2); border:1.5px solid var(--border); transition:all .22s;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.36"/></svg>
+            Limpar filtros
+          </a>
+        </div>
+      </form>
+    </div>
+
+    <!-- Data grid: productivity + records -->
+    <div class="hist-grid">
+
+      <!-- Productivity sidebar -->
+      <div class="card" style="animation-delay:.08s;">
+        <div class="card-header">
+          <div class="card-icon">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
+          </div>
+          <div>
+            <div class="card-title">Produtividade</div>
+            <div class="card-subtitle">Atendimentos por dia</div>
+          </div>
+        </div>
+
+        <div class="prod-list">
+          {% if counts and counts|length > 0 %}
+            {% for c in counts %}
+              <div class="prod-item">
+                <span class="prod-day">{{ c.dia }}</span>
+                <span class="prod-badge">{{ c.qtd }}</span>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="empty-state">
+              <div class="empty-icon">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              </div>
+              <div>Sem registros no<br>filtro atual</div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Records table -->
+      <div class="card" style="animation-delay:.12s;">
+        <div class="card-header">
+          <div class="card-icon">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          </div>
+          <div>
+            <div class="card-title">Registros</div>
+            <div class="card-subtitle">{{ total }} resultado{% if total != 1 %}s{% endif %} encontrado{% if total != 1 %}s{% endif %}</div>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Data / Hora</th>
+                <th>Protocolo</th>
+                <th>Cliente</th>
+                <th>Circuito</th>
+                <th>Serial</th>
+                <th>Tratativa</th>
+                <th style="text-align:center; width:90px;">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for r in records %}
+              <tr data-row="{{ r.row_index }}" id="row-{{ r.row_index }}">
+                <td class="td-dt">{{ r.data_hora }}</td>
+                <td>
+                  <span class="td-badge view-mode">{{ r.protocolo }}</span>
+                  <input type="text" class="edit-input edit-mode" style="display:none;" value="{{ r.protocolo }}" data-field="protocolo">
+                </td>
+                <td>
+                  <span class="view-mode">{{ r.cliente }}</span>
+                  <input type="text" class="edit-input edit-mode" style="display:none;" value="{{ r.cliente }}" data-field="cliente">
+                </td>
+                <td>
+                  <span class="view-mode" style="font-size:12px; color:var(--text-2);">{{ r.circuito }}</span>
+                  <input type="text" class="edit-input edit-mode" style="display:none;" value="{{ r.circuito }}" data-field="circuito">
+                </td>
+                <td>
+                  <span class="view-mode" style="font-size:12px; color:var(--text-3);">{{ r.serial }}</span>
+                  <input type="text" class="edit-input edit-mode" style="display:none;" value="{{ r.serial }}" data-field="serial">
+                </td>
+                <td class="td-tratativa">
+                  <span class="view-mode">{{ r.tratativa }}</span>
+                  <textarea class="edit-input edit-mode" style="display:none; min-height:80px;" data-field="tratativa">{{ r.tratativa }}</textarea>
+                </td>
+                <td style="text-align:center;">
+                  <div class="edit-actions view-mode">
+                    <button class="btn-icon" onclick="editRow({{ r.row_index }})" title="Editar">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    <button class="btn-icon danger" onclick="deleteRow({{ r.row_index }})" title="Deletar">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                  </div>
+                  <div class="edit-actions edit-mode" style="display:none;">
+                    <button class="btn-icon primary" onclick="saveRow({{ r.row_index }})" title="Salvar">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </button>
+                    <button class="btn-icon" onclick="cancelEdit({{ r.row_index }})" title="Cancelar">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+
+              {% if records|length == 0 %}
+              <tr>
+                <td colspan="7">
+                  <div class="empty-state">
+                    <div class="empty-icon">
+                      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    </div>
+                    <div>Nenhum resultado encontrado<br>para os filtros aplicados</div>
+                  </div>
+                </td>
+              </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    let originalValues = {};
+
+    function editRow(rowIndex) {
+      const row = document.getElementById(`row-${rowIndex}`);
+      
+      // Salva valores originais
+      originalValues[rowIndex] = {};
+      row.querySelectorAll('.edit-input').forEach(input => {
+        const field = input.dataset.field;
+        originalValues[rowIndex][field] = input.value;
+      });
+      
+      // Esconde view mode, mostra edit mode
+      row.querySelectorAll('.view-mode').forEach(el => el.style.display = 'none');
+      row.querySelectorAll('.edit-mode').forEach(el => el.style.display = 'block');
+      row.classList.add('row-edit-mode');
+    }
+
+    function cancelEdit(rowIndex) {
+      const row = document.getElementById(`row-${rowIndex}`);
+      
+      // Restaura valores originais
+      if (originalValues[rowIndex]) {
+        row.querySelectorAll('.edit-input').forEach(input => {
+          const field = input.dataset.field;
+          input.value = originalValues[rowIndex][field];
+        });
+      }
+      
+      // Volta ao view mode
+      row.querySelectorAll('.edit-mode').forEach(el => el.style.display = 'none');
+      row.querySelectorAll('.view-mode').forEach(el => el.style.display = '');
+      row.classList.remove('row-edit-mode');
+    }
+
+    async function saveRow(rowIndex) {
+      const row = document.getElementById(`row-${rowIndex}`);
+      const payload = { row_index: rowIndex };
+      
+      row.querySelectorAll('.edit-input').forEach(input => {
+        payload[input.dataset.field] = input.value.trim();
+      });
+      
+      if (!payload.tratativa) {
+        alert('O campo TRATATIVA não pode estar vazio.');
+        return;
+      }
+      
+      try {
+        const res = await fetch('/update', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(payload)
+        });
+        
+        const data = await res.json();
+        
+        if (data.ok) {
+          // Atualiza view mode com novos valores
+          row.querySelector('[data-field="protocolo"]').previousElementSibling.textContent = payload.protocolo;
+          row.querySelector('[data-field="cliente"]').previousElementSibling.textContent = payload.cliente;
+          row.querySelector('[data-field="circuito"]').previousElementSibling.textContent = payload.circuito;
+          row.querySelector('[data-field="serial"]').previousElementSibling.textContent = payload.serial;
+          row.querySelector('[data-field="tratativa"]').previousElementSibling.textContent = payload.tratativa;
+          
+          cancelEdit(rowIndex);
+          
+          // Feedback visual
+          row.style.background = 'var(--ok-soft)';
+          setTimeout(() => { row.style.background = ''; }, 1500);
+        } else {
+          alert('Erro ao atualizar: ' + (data.error || 'Erro desconhecido'));
+        }
+      } catch (e) {
+        alert('Erro ao conectar com o servidor.');
+      }
+    }
+
+    async function deleteRow(rowIndex) {
+      if (!confirm('Tem certeza que deseja deletar este registro? Esta ação não pode ser desfeita.')) {
+        return;
+      }
+      
+      try {
+        const res = await fetch('/delete', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ row_index: rowIndex })
+        });
+        
+        const data = await res.json();
+        
+        if (data.ok) {
+          const row = document.getElementById(`row-${rowIndex}`);
+          row.style.transition = 'all .3s ease';
+          row.style.opacity = '0';
+          row.style.transform = 'translateX(-20px)';
+          setTimeout(() => {
+            row.remove();
+            // Atualiza contador se existir
+            const total = document.querySelectorAll('tbody tr').length - 1; // -1 para excluir a própria linha deletada
+            location.reload(); // Recarrega para atualizar contadores
+          }, 300);
+        } else {
+          alert('Erro ao deletar: ' + (data.error || 'Erro desconhecido'));
+        }
+      } catch (e) {
+        alert('Erro ao conectar com o servidor.');
+      }
+    }
+  </script>
+
+</body>
+</html>
