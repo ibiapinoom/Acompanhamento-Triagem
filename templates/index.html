@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Bloco de Tratativas — GPON</title>
+  <title>TRIAGEM - GPON</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="/static/algar.css">
+  <link rel="icon" id="favicon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%230057A8'/></svg>">
 </head>
 <body>
 
-  <!-- ── TOPBAR ──────────────────────────────────────────── -->
   <header class="topbar">
     <div class="container">
       <div class="brand">
@@ -18,15 +18,18 @@
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
         </div>
         <div class="brand-text">
-          <h1 class="brand-title">Tratativas GPON</h1>
-          <span class="brand-sub">Algar · Registro Técnico</span>
+          <h1 class="brand-title">TRIAGEM MANUAL</h1>
+          <span class="brand-sub">Registro de tratativas</span>
         </div>
       </div>
-
-      <div style="display:flex; align-items:center; gap:10px;">
+      <div style="display:flex; align-items:center; gap:8px;">
         <button class="btn-popup" onclick="openPopup()">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h6"/></svg>
           Pop-up
+        </button>
+        <button class="btn-darkmode" id="btnDark" onclick="toggleDark()">
+          <svg id="darkIcon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <span id="darkLabel">Escuro</span>
         </button>
         <nav class="nav">
           <a href="/" class="active">Tratativa</a>
@@ -36,54 +39,53 @@
     </div>
   </header>
 
+  <main class="container page-content">
 
-    <!-- Main card -->
     <div class="card">
       <div class="card-header">
         <div class="card-icon">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
         </div>
-        <div>
-          <div class="card-title">Dados do Atendimento</div>
-          
-        </div>
+        <div><div class="card-title">Dados do Atendimento</div></div>
       </div>
 
-      <!-- Fields grid -->
       <div class="field-group">
-        <div class="field">
-          <label for="protocolo">Protocolo</label>
-          <input id="protocolo" type="text">
-        </div>
-        <div class="field">
-          <label for="circuito">Circuito</label>
-          <input id="circuito" type="text">
-        </div>
-        <div class="field">
-          <label for="cliente">Cliente</label>
-          <input id="cliente" type="text">
-        </div>
-        <div class="field">
-          <label for="serial">Serial</label>
-          <input id="serial" type="text">
-        </div>
+        <div class="field"><label for="protocolo">Protocolo</label><input id="protocolo" type="text"></div>
+        <div class="field"><label for="circuito">Circuito</label><input id="circuito" type="text"></div>
+        <div class="field"><label for="cliente">Cliente</label><input id="cliente" type="text"></div>
+        <div class="field"><label for="serial">Serial</label><input id="serial" type="text"></div>
       </div>
 
-      <!-- Tratativa -->
       <div class="tratativa-wrap">
-        <span class="tratativa-label">Tratativa / Parecer Técnico</span>
+        <span class="tratativa-label">Tratativa</span>
         <textarea id="tratativa" placeholder="Descreva aqui a tratativa completa."></textarea>
       </div>
 
-      <!-- Actions -->
+      <div class="retorno-wrap">
+        <span class="retorno-label">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 7a16 16 0 0 0 6 6l.31-.3a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 15z"/></svg>
+          Precisa de retorno?
+        </span>
+        <div class="retorno-btns">
+          <button type="button" class="btn-retorno" id="btnRetornoNao" onclick="setRetorno(false)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            Não
+          </button>
+          <button type="button" class="btn-retorno" id="btnRetornoSim" onclick="setRetorno(true)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 .49-3.36"/></svg>
+            Sim
+          </button>
+        </div>
+      </div>
+
       <div class="actions">
         <button class="btn-primary" id="btnSave">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-          Salvar no Excel
+          Finalizar
         </button>
         <button class="btn-secondary" id="btnCopy">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copiar Tudo
+          Copiar
         </button>
         <button class="btn-ghost" id="btnClear">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
@@ -91,81 +93,71 @@
         </button>
       </div>
 
-      <!-- Toasts -->
       <div class="toast" id="toastOk">
-        <span class="toast-icon">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        </span>
+        <span class="toast-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
         <span id="toastOkMsg"></span>
       </div>
       <div class="toast" id="toastErr">
-        <span class="toast-icon">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        </span>
+        <span class="toast-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
         <span id="toastErrMsg"></span>
       </div>
     </div>
 
-    <!-- Registros de Hoje -->
     {% if today_records and today_records|length > 0 %}
-    <div class="card" style="margin-top:16px; animation-delay:.08s;">
-      <div class="card-header">
+    <div class="card" style="margin-top:16px; animation-delay:.08s;" id="todayCard">
+      <div class="card-header" style="flex-wrap:wrap; gap:8px;">
         <div class="card-icon">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         </div>
-        <div>
+        <div style="flex:1; min-width:0;">
           <div class="card-title">Registros de Hoje</div>
-          <div class="card-subtitle">{{ today_date }} • {{ today_records|length }} atendimento{% if today_records|length != 1 %}s{% endif %}</div>
+          <div class="card-subtitle" id="todaySubtitle">{{ today_date }} • {{ today_records|length }} atendimento{% if today_records|length != 1 %}s{% endif %}</div>
+        </div>
+        <div class="day-stats" id="dayStats">
+          <div class="day-stat day-stat--total"><span class="day-stat-num" id="statTotal">{{ stats.total }}</span><span class="day-stat-label">atend.</span></div>
+          <div class="day-stat day-stat--retido"><span class="day-stat-num" id="statRetidos">{{ stats.retidos }}</span><span class="day-stat-label">retidos</span></div>
+          <div class="day-stat day-stat--campo"><span class="day-stat-num" id="statCampo">{{ stats.campo }}</span><span class="day-stat-label">campo</span></div>
+          <div class="day-stat day-stat--pct {% if stats.pct_retido >= 40 %}pct-green{% else %}pct-red{% endif %}" id="statPctBox"><span class="day-stat-num" id="statPct">{{ stats.pct_retido }}%</span><span class="day-stat-label">retido</span></div>
         </div>
       </div>
 
-      <div class="today-list">
+      <div class="today-list" id="todayList">
         {% for r in today_records %}
-        <div class="today-item" id="today-row-{{ r.row_index }}" data-row="{{ r.row_index }}">
+        <div class="today-item {{ 'item-green' if ('RETIDO' in r.status.upper() or 'CAMPO' in r.status.upper()) else '' }}"
+             id="today-row-{{ r.row_index }}" data-row="{{ r.row_index }}" data-status="{{ r.status }}">
           <div class="today-time">{{ r.data_hora.split(' ')[1] }}</div>
           <div class="today-content">
-            <!-- View Mode -->
             <div class="today-view view-mode">
               <div class="today-meta">
                 {% if r.protocolo %}<span class="today-badge">{{ r.protocolo }}</span>{% endif %}
                 {% if r.cliente %}<span class="today-client">{{ r.cliente }}</span>{% endif %}
                 {% if r.circuito %}<span class="today-circuit">{{ r.circuito }}</span>{% endif %}
                 {% if r.serial %}<span class="today-serial">SN: {{ r.serial }}</span>{% endif %}
+                {% if 'RETIDO' in r.status.upper() %}<span class="status-flag flag-retido">✔ Retido</span>
+                {% elif 'CAMPO' in r.status.upper() %}<span class="status-flag flag-campo">🔧 Campo</span>{% endif %}
               </div>
               <div class="today-tratativa">{{ r.tratativa }}</div>
+              <div class="timer-area" id="timer-area-{{ r.row_index }}"></div>
             </div>
-
-            <!-- Edit Mode -->
             <div class="today-edit edit-mode" style="display:none;">
-              <div class="field-group" style="grid-template-columns: repeat(2, 1fr); gap:8px; margin-bottom:8px;">
+              <div class="field-group" style="grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:8px;">
                 <input type="text" class="edit-input" value="{{ r.protocolo|e }}" data-field="protocolo" placeholder="Protocolo">
-                <input type="text" class="edit-input" value="{{ r.cliente|e }}" data-field="cliente" placeholder="Cliente">
-                <input type="text" class="edit-input" value="{{ r.circuito|e }}" data-field="circuito" placeholder="Circuito">
-                <input type="text" class="edit-input" value="{{ r.serial|e }}" data-field="serial" placeholder="Serial">
+                <input type="text" class="edit-input" value="{{ r.cliente|e }}"   data-field="cliente"   placeholder="Cliente">
+                <input type="text" class="edit-input" value="{{ r.circuito|e }}"  data-field="circuito"  placeholder="Circuito">
+                <input type="text" class="edit-input" value="{{ r.serial|e }}"    data-field="serial"    placeholder="Serial">
               </div>
               <textarea class="edit-input" data-field="tratativa" placeholder="Tratativa" style="min-height:100px;">{{ r.tratativa|e }}</textarea>
+              <input type="hidden" class="edit-input" data-field="status" value="{{ r.status|e }}">
             </div>
-
-            <!-- Actions -->
             <div class="today-actions">
-              <div class="view-mode" style="display:flex; gap:6px; margin-top:8px;">
-                <button class="btn-icon" onclick="copyTodayRow({{ r.row_index }})" title="Copiar">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                </button>
-                <button class="btn-icon" onclick="editTodayRow({{ r.row_index }})" title="Editar">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                </button>
-                <button class="btn-icon danger" onclick="deleteTodayRow({{ r.row_index }})" title="Deletar">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                </button>
+              <div class="view-mode" style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+                <button class="btn-icon" onclick="copyTodayRow({{ r.row_index }})" title="Copiar"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+                <button class="btn-icon" onclick="editTodayRow({{ r.row_index }})" title="Editar"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                <button class="btn-icon danger" onclick="deleteTodayRow({{ r.row_index }})" title="Deletar"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
               </div>
-              <div class="edit-mode" style="display:none; gap:6px; margin-top:8px;">
-                <button class="btn-icon primary" onclick="saveTodayRow({{ r.row_index }})" title="Salvar">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                </button>
-                <button class="btn-icon" onclick="cancelTodayEdit({{ r.row_index }})" title="Cancelar">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                </button>
+              <div class="edit-mode" style="display:none;gap:6px;margin-top:8px;">
+                <button class="btn-icon primary" onclick="saveTodayRow({{ r.row_index }})" title="Salvar"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
+                <button class="btn-icon" onclick="cancelTodayEdit({{ r.row_index }})" title="Cancelar"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
               </div>
             </div>
           </div>
@@ -178,463 +170,561 @@
   </main>
 
   <script>
-    const $ = (id) => document.getElementById(id);
+    // ── CONSTANTES (altere para testes) ──────────────────────
+    const TIMER_DURATION = 30;
+    const WARN_THRESHOLD = 10;
+    const MAX_TENTATIVAS = 2;
+    const LS_KEY         = "gpon_timers";
 
-    // ─── LOCALSTORAGE: Auto-save campos ────────────────────
-    const FIELDS = ["protocolo", "circuito", "cliente", "serial", "tratativa"];
+    // ── UTILITÁRIOS ──────────────────────────────────────────
+    const $ = id => document.getElementById(id);
+    const fmtSecs = s => String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");
+    const escHtml = s => String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 
-    function saveToLocalStorage() {
-      FIELDS.forEach(id => {
-        localStorage.setItem(`gpon_${id}`, $(id).value);
-      });
+    // ── FAVICON ──────────────────────────────────────────────
+    const FAV_NORMAL = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%230057A8'/></svg>";
+    const FAV_ALERT  = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23E53E3E'/><text x='50' y='68' text-anchor='middle' font-size='55' font-family='sans-serif' fill='white'>!</text></svg>";
+
+    function updateFavicon() {
+      const hasOverdue = Object.values(timerState).some(st => st && !st.concluido && st.aguardandoAcao);
+      $("favicon").href = hasOverdue ? FAV_ALERT : FAV_NORMAL;
     }
 
-    function loadFromLocalStorage() {
-      FIELDS.forEach(id => {
-        const saved = localStorage.getItem(`gpon_${id}`);
-        if (saved !== null) $(id).value = saved;
-      });
+    // ── ESTADO DOS TIMERS ────────────────────────────────────
+    // timerState[rowIndex] = { endTs, tentativas, concluido, aguardandoAcao }
+    function loadTS()  { try { return JSON.parse(localStorage.getItem(LS_KEY)||"{}"); } catch { return {}; } }
+    function saveTS()  { localStorage.setItem(LS_KEY, JSON.stringify(timerState)); }
+    let timerState     = loadTS();
+    let timerIntervals = {};
+
+    // ── COR DO CARD ──────────────────────────────────────────
+    function applyColor(rowIndex, cls) {
+      const el = $(`today-row-${rowIndex}`);
+      if (!el) return;
+      el.classList.remove("item-green","item-yellow","item-red");
+      if (cls) el.classList.add(cls);
     }
 
-    // Restaura valores ao carregar página
-    window.addEventListener("DOMContentLoaded", loadFromLocalStorage);
-
-    // Salva a cada mudança
-    FIELDS.forEach(id => {
-      $(id).addEventListener("input", saveToLocalStorage);
-    });
-
-    // ─── TOAST ──────────────────────────────────────────────
-    function showToast(kind, msg) {
-      const toastOk  = $("toastOk");
-      const toastErr = $("toastErr");
-      
-      // Esconde ambos primeiro
-      toastOk.style.display = "none";
-      toastErr.style.display = "none";
-      toastOk.classList.remove("ok");
-      toastErr.classList.remove("err");
-
-      if (kind === "ok") {
-        $("toastOkMsg").textContent = msg;
-        toastOk.classList.add("ok");
-        toastOk.style.display = "flex";
-      } else {
-        $("toastErrMsg").textContent = msg;
-        toastErr.classList.add("err");
-        toastErr.style.display = "flex";
-      }
-
-      // Auto-hide toast após 4s
-      setTimeout(() => {
-        toastOk.style.display = "none";
-        toastErr.style.display = "none";
-      }, 4000);
+    // ── ALERTA SONORO ────────────────────────────────────────
+    function playAlert() {
+      try {
+        const ctx = new (window.AudioContext||window.webkitAudioContext)();
+        [880,0,880,0,1100].forEach((freq,i) => {
+          if (!freq) return;
+          const o=ctx.createOscillator(), g=ctx.createGain();
+          o.connect(g); g.connect(ctx.destination);
+          o.frequency.value=freq; o.type="sine";
+          const t=ctx.currentTime+i*0.22;
+          g.gain.setValueAtTime(0.4,t); g.gain.exponentialRampToValueAtTime(0.001,t+0.18);
+          o.start(t); o.stop(t+0.18);
+        });
+      } catch {}
     }
 
-    function buildCopyText() {
-      const protocolo = $("protocolo").value.trim();
-      const circuito  = $("circuito").value.trim();
-      const cliente   = $("cliente").value.trim();
-      const serial    = $("serial").value.trim();
-      const tratativa = $("tratativa").value.trim();
-      return `PROTOCOLO: ${protocolo}\nCIRCUITO: ${circuito}\nCLIENTE: ${cliente}\nSERIAL: ${serial}\n\nTRATATIVA:\n${tratativa}`.trim();
-    }
+    // ── RENDERIZA ÁREA DO TIMER ──────────────────────────────
+    // Estados: rodando | aguardandoAcao | vazio
+    function renderTimerArea(rowIndex) {
+      const area = $(`timer-area-${rowIndex}`);
+      if (!area) return;
+      const st = timerState[rowIndex];
+      if (!st || st.concluido) { area.innerHTML = ""; return; }
 
-    // ─── SAVE ───────────────────────────────────────────────
-    async function save() {
-      const btn = $("btnSave");
-      const payload = {
-        protocolo: $("protocolo").value.trim(),
-        circuito:  $("circuito").value.trim(),
-        cliente:   $("cliente").value.trim(),
-        serial:    $("serial").value.trim(),
-        tratativa: $("tratativa").value.trim(),
-      };
+      if (st.aguardandoAcao) {
+        const semRetorno = st.tentativas === 0;          // OS salva com "Não" — nunca teve timer
+        const esgotado   = st.tentativas >= MAX_TENTATIVAS; // timer(es) esgotado(s)
 
-      if (!payload.tratativa) {
-        showToast("err", "O campo TRATATIVA está vazio.");
+        if (semRetorno) {
+          // Caso "Precisa de retorno? Não" — apenas escolha de desfecho, sem contexto de timer
+          area.innerHTML = `
+            <div class="inline-action-block inline-action-block--red">
+              <span class="inline-action-label">Defina o desfecho desta OS:</span>
+              <div class="inline-action-btns">
+                <button class="btn-inline-retido" onclick="finalizarDesfecho(${rowIndex},'RETIDO')">✔ Retido</button>
+                <button class="btn-inline-campo"  onclick="finalizarDesfecho(${rowIndex},'CAMPO')">🔧 Enviado ao Campo</button>
+              </div>
+            </div>`;
+        } else if (esgotado) {
+          // Todas as tentativas de retorno esgotadas
+          area.innerHTML = `
+            <div class="inline-action-block inline-action-block--red">
+              <span class="inline-action-label">⏰ ${MAX_TENTATIVAS}/${MAX_TENTATIVAS} tentativas encerradas — Qual o desfecho?</span>
+              <div class="inline-action-btns">
+                <button class="btn-inline-retido" onclick="finalizarDesfecho(${rowIndex},'RETIDO')">✔ Retido</button>
+                <button class="btn-inline-campo"  onclick="finalizarDesfecho(${rowIndex},'CAMPO')">🔧 Enviado ao Campo</button>
+              </div>
+            </div>`;
+        } else {
+          // Tentativa de retorno encerrada, ainda há mais disponíveis
+          area.innerHTML = `
+            <div class="inline-action-block inline-action-block--orange">
+              <span class="inline-action-label">⏰ Tentativa ${st.tentativas}/${MAX_TENTATIVAS} encerrada — Necessita mais um retorno?</span>
+              <div class="inline-action-btns">
+                <button class="btn-inline-sim"    onclick="iniciarNovoTimer(${rowIndex})">↺ Sim — +30 min</button>
+                <button class="btn-inline-retido" onclick="finalizarDesfecho(${rowIndex},'RETIDO')">✔ Retido</button>
+                <button class="btn-inline-campo"  onclick="finalizarDesfecho(${rowIndex},'CAMPO')">🔧 Campo</button>
+              </div>
+            </div>`;
+        }
         return;
       }
 
-      btn.disabled = true;
-      btn.style.opacity = ".7";
-      btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg> Salvando...`;
-
-      try {
-        const res = await fetch("/save", {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-        if (!res.ok || !data.ok) {
-          showToast("err", data.error || "Falha ao salvar.");
-        } else {
-          showToast("ok", data.message || "Registro salvo com sucesso!");
-          // Recarrega registros de hoje automaticamente
-          await reloadTodayRecords();
-        }
-      } catch {
-        showToast("err", "Erro ao conectar no servidor local.");
-      } finally {
-        btn.disabled = false;
-        btn.style.opacity = "1";
-        btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Salvar no Excel`;
-      }
+      const remaining = Math.max(0, Math.floor((st.endTs - Date.now()) / 1000));
+      area.innerHTML = `
+        <div class="timer-block">
+          <span class="timer-label" id="timer-label-${rowIndex}">Tentativa ${st.tentativas}/${MAX_TENTATIVAS} · Retorno em:</span>
+          <span class="timer-countdown" id="timer-countdown-${rowIndex}">${fmtSecs(remaining)}</span>
+        </div>`;
     }
 
-    // ─── RELOAD TODAY RECORDS ───────────────────────────────
-    async function reloadTodayRecords() {
+    // ── TICK ─────────────────────────────────────────────────
+    function tickTimer(rowIndex) {
+      if (timerIntervals[rowIndex]) { clearInterval(timerIntervals[rowIndex]); delete timerIntervals[rowIndex]; }
+      timerIntervals[rowIndex] = setInterval(() => {
+        const st = timerState[rowIndex];
+        if (!st || st.concluido || st.aguardandoAcao) { clearInterval(timerIntervals[rowIndex]); return; }
+        const remaining = Math.max(0, Math.floor((st.endTs - Date.now()) / 1000));
+        const el = $(`timer-countdown-${rowIndex}`);
+        if (el) el.textContent = fmtSecs(remaining);
+        if (remaining > WARN_THRESHOLD)      applyColor(rowIndex, "");
+        else if (remaining > 0)              applyColor(rowIndex, "item-yellow");
+        if (remaining <= 0) { clearInterval(timerIntervals[rowIndex]); delete timerIntervals[rowIndex]; onTimerExpired(rowIndex); }
+      }, 1000);
+    }
+
+    // ── TIMER EXPIROU ────────────────────────────────────────
+    function onTimerExpired(rowIndex) {
+      const st = timerState[rowIndex];
+      if (!st) return;
+      st.aguardandoAcao = true;
+      saveTS();
+      applyColor(rowIndex, "item-red");
+      playAlert();
+      renderTimerArea(rowIndex);   // mostra botões inline
+      updateFavicon();
+    }
+
+    // ── INICIA NOVO TIMER ────────────────────────────────────
+    function iniciarNovoTimer(rowIndex) {
+      const st = timerState[rowIndex] || { tentativas: 0, concluido: false };
+      st.tentativas     = (st.tentativas||0) + 1;
+      st.endTs          = Date.now() + TIMER_DURATION * 1000;
+      st.concluido      = false;
+      st.aguardandoAcao = false;
+      timerState[rowIndex] = st;
+      saveTS();
+      applyColor(rowIndex, "");
+      renderTimerArea(rowIndex);
+      tickTimer(rowIndex);
+      updateFavicon();
+    }
+
+    // ── FINALIZA DESFECHO ────────────────────────────────────
+    async function finalizarDesfecho(rowIndex, desfecho) {
+      const statusVal = desfecho === "RETIDO" ? "RETIDO" : "ENVIADO AO CAMPO";
+      if (timerState[rowIndex]) {
+        timerState[rowIndex].concluido = true;
+        timerState[rowIndex].aguardandoAcao = false;
+        saveTS();
+      }
+      if (timerIntervals[rowIndex]) { clearInterval(timerIntervals[rowIndex]); delete timerIntervals[rowIndex]; }
+
+      const area = $(`timer-area-${rowIndex}`);
+      if (area) area.innerHTML = "";
+      applyColor(rowIndex, "item-green");
+
+      const item = $(`today-row-${rowIndex}`);
+      if (item) {
+        item.dataset.status = statusVal;
+        const meta = item.querySelector(".today-meta");
+        if (meta) {
+          meta.querySelectorAll(".status-flag").forEach(f => f.remove());
+          const flag = document.createElement("span");
+          flag.className = `status-flag ${desfecho==="RETIDO" ? "flag-retido" : "flag-campo"}`;
+          flag.textContent = desfecho==="RETIDO" ? "✔ Retido" : "🔧 Campo";
+          meta.appendChild(flag);
+        }
+        const hs = item.querySelector('.edit-input[data-field="status"]');
+        if (hs) hs.value = statusVal;
+      }
+
+      updateFavicon();
+
       try {
-        const res = await fetch("/today-records");
+        await fetch("/update-status", {
+          method:"POST", headers:{"Content-Type":"application/json"},
+          body: JSON.stringify({ row_index: rowIndex, status: statusVal })
+        });
+      } catch {}
+
+      await refreshStats();
+      showToast("ok", `OS marcada como: ${statusVal}`);
+    }
+
+    // ── BOOTSTRAP ────────────────────────────────────────────
+    function bootstrapTimers() {
+      document.querySelectorAll(".today-item[data-row]").forEach(item => {
+        const rowIndex = parseInt(item.dataset.row);
+        const status   = (item.dataset.status||"").toUpperCase();
+
+        if (status.includes("RETIDO") || status.includes("CAMPO")) {
+          applyColor(rowIndex, "item-green");
+          if (timerState[rowIndex]) { timerState[rowIndex].concluido=true; timerState[rowIndex].aguardandoAcao=false; saveTS(); }
+          return;
+        }
+
+        const st = timerState[rowIndex];
+        if (!st || st.concluido) return;
+
+        if (st.aguardandoAcao) {
+          applyColor(rowIndex, "item-red");
+          renderTimerArea(rowIndex);
+          return;
+        }
+
+        const remaining = Math.floor((st.endTs - Date.now()) / 1000);
+        if (remaining > 0) {
+          renderTimerArea(rowIndex);
+          tickTimer(rowIndex);
+          if (remaining <= WARN_THRESHOLD) applyColor(rowIndex, "item-yellow");
+        } else {
+          onTimerExpired(rowIndex);
+        }
+      });
+      updateFavicon();
+    }
+
+    // ── SALVAR ───────────────────────────────────────────────
+    let _retornoSelecionado = null;
+    function setRetorno(sim) {
+      _retornoSelecionado = sim;
+      $("btnRetornoSim").classList.toggle("active", sim===true);
+      $("btnRetornoNao").classList.toggle("active", sim===false);
+    }
+
+    const FIELDS = ["protocolo","circuito","cliente","serial","tratativa"];
+
+    async function save() {
+      const btn = $("btnSave");
+      const payload = {
+        protocolo: $("protocolo").value.trim(), circuito: $("circuito").value.trim(),
+        cliente:   $("cliente").value.trim(),   serial:   $("serial").value.trim(),
+        tratativa: $("tratativa").value.trim(), status:   "",
+      };
+      if (!payload.tratativa) { showToast("err","O campo TRATATIVA está vazio."); return; }
+      if (_retornoSelecionado===null) { showToast("err","Selecione se a OS precisa de retorno (Sim ou Não)."); return; }
+
+      const precisaRetorno = _retornoSelecionado===true;
+      payload.status = precisaRetorno ? "AGUARDANDO_RETORNO" : "";
+
+      btn.disabled=true; btn.style.opacity=".7";
+      try {
+        const res  = await fetch("/save",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
         const data = await res.json();
-        
-        if (data.ok && data.records) {
-          const todaySection = document.querySelector('.card:has(.today-list)');
-          
-          if (data.records.length === 0) {
-            // Remove a seção se não houver registros
-            if (todaySection) todaySection.remove();
-          } else {
-            // Atualiza ou cria a seção
-            if (!todaySection) {
-              location.reload(); // Se não existe, recarrega página para criar
+        if (!res.ok||!data.ok) {
+          showToast("err", data.error||"Falha ao salvar.");
+        } else {
+          showToast("ok", data.message||"Registro salvo!");
+          FIELDS.forEach(id=>{ $(id).value=""; localStorage.removeItem(`gpon_${id}`); });
+          _retornoSelecionado=null;
+          $("btnRetornoSim").classList.remove("active");
+          $("btnRetornoNao").classList.remove("active");
+
+          if (!$("todayCard")) {
+            sessionStorage.setItem("gpon_post_save", JSON.stringify({precisaRetorno}));
+            location.reload(); return;
+          }
+
+          const newRecords = await reloadTodayRecords();
+          if (newRecords&&newRecords.length>0) {
+            await new Promise(r=>setTimeout(r,80));
+            const newest = newRecords[0];
+            if (precisaRetorno) {
+              iniciarNovoTimer(newest.row_index);
             } else {
-              updateTodayList(data.records);
+              // Sem retorno → mostra botões de desfecho inline imediatamente
+              timerState[newest.row_index] = { tentativas:0, concluido:false, aguardandoAcao:true, endTs:0 };
+              saveTS();
+              applyColor(newest.row_index, "item-red");
+              renderTimerArea(newest.row_index);
+              updateFavicon();
             }
           }
         }
-      } catch (e) {
-        console.error("Erro ao recarregar registros de hoje:", e);
+      } catch { showToast("err","Erro ao conectar no servidor local."); }
+      finally { btn.disabled=false; btn.style.opacity="1"; }
+    }
+
+    // ── RELOAD TODAY ─────────────────────────────────────────
+    async function reloadTodayRecords() {
+      try {
+        const res  = await fetch("/today-records");
+        const data = await res.json();
+        if (data.ok&&data.records) {
+          if (data.records.length===0) { const c=$("todayCard"); if(c) c.remove(); }
+          else {
+            if (!$("todayCard")) { location.reload(); return data.records; }
+            updateTodayList(data.records);
+          }
+          if (data.stats) updateDayStats(data.stats);
+          return data.records;
+        }
+      } catch(e) { console.error(e); }
+      return [];
+    }
+
+    async function refreshStats() {
+      try {
+        const res=await fetch("/today-records"); const data=await res.json();
+        if(data.ok&&data.stats) updateDayStats(data.stats);
+      } catch {}
+    }
+
+    function updateDayStats(s) {
+      const set=(id,v)=>{const e=$(id);if(e)e.textContent=v;};
+      set("statTotal",s.total); set("statRetidos",s.retidos); set("statCampo",s.campo); set("statPct",s.pct_retido+"%");
+      const pctBox = $("statPctBox");
+      if (pctBox) {
+        pctBox.classList.toggle("pct-green", s.pct_retido >= 40);
+        pctBox.classList.toggle("pct-red",   s.pct_retido <  40);
       }
     }
 
     function updateTodayList(records) {
-      const todayList = document.querySelector('.today-list');
-      if (!todayList) return;
-      
-      // Limpa a lista
-      todayList.innerHTML = '';
-      
-      // Adiciona cada registro
-      records.forEach(r => {
-        const item = document.createElement('div');
-        item.className = 'today-item';
-        item.id = `today-row-${r.row_index}`;
-        item.dataset.row = r.row_index;
-        
-        item.innerHTML = `
-          <div class="today-time">${r.data_hora.split(' ')[1] || ''}</div>
+      const list=$("todayList"); if(!list) return;
+      list.innerHTML="";
+      records.forEach(r=>{
+        const su=(r.status||"").toUpperCase();
+        const isClosed=su.includes("RETIDO")||su.includes("CAMPO");
+        let flagHtml="";
+        if(su.includes("RETIDO")) flagHtml=`<span class="status-flag flag-retido">✔ Retido</span>`;
+        else if(su.includes("CAMPO")) flagHtml=`<span class="status-flag flag-campo">🔧 Campo</span>`;
+
+        const item=document.createElement("div");
+        item.className=`today-item${isClosed?" item-green":""}`;
+        item.id=`today-row-${r.row_index}`; item.dataset.row=r.row_index; item.dataset.status=r.status||"";
+        item.innerHTML=`
+          <div class="today-time">${r.data_hora.split(" ")[1]||""}</div>
           <div class="today-content">
             <div class="today-view view-mode">
               <div class="today-meta">
-                ${r.protocolo ? `<span class="today-badge">${r.protocolo}</span>` : ''}
-                ${r.cliente ? `<span class="today-client">${r.cliente}</span>` : ''}
-                ${r.circuito ? `<span class="today-circuit">${r.circuito}</span>` : ''}
-                ${r.serial ? `<span class="today-serial">SN: ${r.serial}</span>` : ''}
+                ${r.protocolo?`<span class="today-badge">${escHtml(r.protocolo)}</span>`:""}
+                ${r.cliente?`<span class="today-client">${escHtml(r.cliente)}</span>`:""}
+                ${r.circuito?`<span class="today-circuit">${escHtml(r.circuito)}</span>`:""}
+                ${r.serial?`<span class="today-serial">SN: ${escHtml(r.serial)}</span>`:""}
+                ${flagHtml}
               </div>
-              <div class="today-tratativa">${r.tratativa || ''}</div>
+              <div class="today-tratativa">${escHtml(r.tratativa||"")}</div>
+              <div class="timer-area" id="timer-area-${r.row_index}"></div>
             </div>
             <div class="today-edit edit-mode" style="display:none;">
-              <div class="field-group" style="grid-template-columns: repeat(2, 1fr); gap:8px; margin-bottom:8px;">
-                <input type="text" class="edit-input" data-field="protocolo" placeholder="Protocolo">
-                <input type="text" class="edit-input" data-field="cliente" placeholder="Cliente">
-                <input type="text" class="edit-input" data-field="circuito" placeholder="Circuito">
-                <input type="text" class="edit-input" data-field="serial" placeholder="Serial">
+              <div class="field-group" style="grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:8px;">
+                <input type="text" class="edit-input" data-field="protocolo" placeholder="Protocolo" value="${escHtml(r.protocolo)}">
+                <input type="text" class="edit-input" data-field="cliente"   placeholder="Cliente"   value="${escHtml(r.cliente)}">
+                <input type="text" class="edit-input" data-field="circuito"  placeholder="Circuito"  value="${escHtml(r.circuito)}">
+                <input type="text" class="edit-input" data-field="serial"    placeholder="Serial"    value="${escHtml(r.serial)}">
               </div>
-              <textarea class="edit-input" data-field="tratativa" placeholder="Tratativa" style="min-height:100px;"></textarea>
+              <textarea class="edit-input" data-field="tratativa" placeholder="Tratativa" style="min-height:100px;">${escHtml(r.tratativa||"")}</textarea>
+              <input type="hidden" class="edit-input" data-field="status" value="${escHtml(r.status||"")}">
             </div>
             <div class="today-actions">
-              <div class="view-mode" style="display:flex; gap:6px; margin-top:8px;">
-                <button class="btn-icon" title="Copiar">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                </button>
-                <button class="btn-icon" title="Editar">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                </button>
-                <button class="btn-icon danger" title="Deletar">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                </button>
+              <div class="view-mode" style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+                <button class="btn-icon" title="Copiar"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button>
+                <button class="btn-icon" title="Editar"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+                <button class="btn-icon danger" title="Deletar"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
               </div>
-              <div class="edit-mode" style="display:none; gap:6px; margin-top:8px;">
-                <button class="btn-icon primary" title="Salvar">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                </button>
-                <button class="btn-icon" title="Cancelar">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                </button>
+              <div class="edit-mode" style="display:none;gap:6px;margin-top:8px;">
+                <button class="btn-icon primary" title="Salvar"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
+                <button class="btn-icon" title="Cancelar"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
               </div>
             </div>
-          </div>
-        `;
-        
-        // Define valores dos inputs de forma segura
-        const inputs = item.querySelectorAll('.edit-input');
-        inputs[0].value = r.protocolo || '';
-        inputs[1].value = r.cliente || '';
-        inputs[2].value = r.circuito || '';
-        inputs[3].value = r.serial || '';
-        inputs[4].value = r.tratativa || '';
-        
-        // Adiciona event listeners aos botões
-        const buttons = item.querySelectorAll('.view-mode button');
-        buttons[0].onclick = () => copyTodayRow(r.row_index);
-        buttons[1].onclick = () => editTodayRow(r.row_index);
-        buttons[2].onclick = () => deleteTodayRow(r.row_index);
-        
-        const editButtons = item.querySelectorAll('.edit-mode button');
-        editButtons[0].onclick = () => saveTodayRow(r.row_index);
-        editButtons[1].onclick = () => cancelTodayEdit(r.row_index);
-        
-        todayList.appendChild(item);
+          </div>`;
+
+        const vb=item.querySelectorAll(".view-mode button");
+        vb[0].onclick=()=>copyTodayRow(r.row_index); vb[1].onclick=()=>editTodayRow(r.row_index); vb[2].onclick=()=>deleteTodayRow(r.row_index);
+        const eb=item.querySelectorAll(".edit-mode button");
+        eb[0].onclick=()=>saveTodayRow(r.row_index); eb[1].onclick=()=>cancelTodayEdit(r.row_index);
+        list.appendChild(item);
+
+        // Guarda o rowIndex para reaplica estado após toda a lista estar no DOM
+        item._rowIndexGpon = r.row_index;
+        item._isClosedGpon = isClosed;
       });
-      
-      // Atualiza contador
-      const subtitle = document.querySelector('.card:has(.today-list) .card-subtitle');
-      if (subtitle) {
-        const count = records.length;
-        const today = new Date();
-        const dd = String(today.getDate()).padStart(2, '0');
-        const mm = String(today.getMonth() + 1).padStart(2, '0');
-        const yyyy = today.getFullYear();
-        const todayFormatted = dd + '/' + mm + '/' + yyyy;
-        subtitle.textContent = todayFormatted + ' • ' + count + ' atendimento' + (count !== 1 ? 's' : '');
-      }
+
+      // Reaplica cores e timer-areas DEPOIS de toda a lista estar montada no DOM
+      list.querySelectorAll(".today-item[data-row]").forEach(item => {
+        const rowIndex = item._rowIndexGpon;
+        const isClosed = item._isClosedGpon;
+        if (isClosed) {
+          applyColor(rowIndex, "item-green");
+          return;
+        }
+        const st = timerState[rowIndex];
+        if (!st || st.concluido) return;
+        if (st.aguardandoAcao) {
+          applyColor(rowIndex, "item-red");
+          renderTimerArea(rowIndex);
+        } else {
+          renderTimerArea(rowIndex);
+          // Reinicia o tick pois o elemento do contador foi recriado no DOM
+          tickTimer(rowIndex);
+          const rem = Math.max(0, Math.floor((st.endTs - Date.now()) / 1000));
+          if (rem <= WARN_THRESHOLD) applyColor(rowIndex, "item-yellow");
+        }
+      });
+
+      const sub=$("todaySubtitle");
+      if(sub){ const d=new Date(); sub.textContent=`${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}/${d.getFullYear()} • ${records.length} atendimento${records.length!==1?"s":""}`; }
     }
 
-    // ─── COPY ───────────────────────────────────────────────
-    async function copyAll() {
-      if (!$("tratativa").value.trim()) {
-        showToast("err", "Nada para copiar: TRATATIVA está vazia.");
-        return;
-      }
-
-      const text = buildCopyText();
-      const btn = $("btnCopy");
-      
+    // ── PÓS-RELOAD ───────────────────────────────────────────
+    async function checkPostSaveIntent() {
+      const raw=sessionStorage.getItem("gpon_post_save"); if(!raw) return;
+      sessionStorage.removeItem("gpon_post_save");
+      let intent; try{intent=JSON.parse(raw);}catch{return;}
       try {
-        await navigator.clipboard.writeText(text);
-      } catch {
-        const ta = document.createElement("textarea");
-        ta.value = text;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand("copy");
-        ta.remove();
-      }
-
-      // Feedback visual no botão
-      const originalHTML = btn.innerHTML;
-      btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Texto Copiado!`;
-      btn.style.background = "var(--ok)";
-      btn.style.color = "#fff";
-      
-      setTimeout(() => {
-        btn.innerHTML = originalHTML;
-        btn.style.background = "";
-        btn.style.color = "";
-      }, 2000);
-
-      showToast("ok", "Texto copiado! Agora é só colar na OS.");
+        const res=await fetch("/today-records"); const data=await res.json();
+        if(!data.ok||!data.records||!data.records.length) return;
+        const newest=data.records[0];
+        await new Promise(r=>setTimeout(r,150));
+        if(intent.precisaRetorno) {
+          iniciarNovoTimer(newest.row_index);
+        } else {
+          timerState[newest.row_index]={tentativas:0,concluido:false,aguardandoAcao:true,endTs:0};
+          saveTS(); applyColor(newest.row_index,"item-red"); renderTimerArea(newest.row_index); updateFavicon();
+        }
+      } catch {}
     }
 
-    // ─── CLEAR ──────────────────────────────────────────────
-    function clearAll() {
-      const hasAny = FIELDS.some(id => $(id).value.trim());
-      if (hasAny && !confirm("Deseja limpar todos os campos?")) return;
-      
-      FIELDS.forEach(id => {
-        $(id).value = "";
-        localStorage.removeItem(`gpon_${id}`);
+    // ── TOAST ────────────────────────────────────────────────
+    function showToast(kind,msg) {
+      const ok=$("toastOk"),err=$("toastErr");
+      ok.style.display="none"; ok.classList.remove("ok");
+      err.style.display="none"; err.classList.remove("err");
+      if(kind==="ok"){$("toastOkMsg").textContent=msg;ok.classList.add("ok");ok.style.display="flex";}
+      else{$("toastErrMsg").textContent=msg;err.classList.add("err");err.style.display="flex";}
+      setTimeout(()=>{ok.style.display="none";err.style.display="none";},5000);
+    }
+
+    // ── LOCALSTORAGE ─────────────────────────────────────────
+    function saveToLS(){FIELDS.forEach(id=>localStorage.setItem(`gpon_${id}`,$(id).value));}
+    function loadFromLS(){FIELDS.forEach(id=>{const v=localStorage.getItem(`gpon_${id}`);if(v!==null)$(id).value=v;});}
+
+    window.addEventListener("DOMContentLoaded",()=>{ loadFromLS(); bootstrapTimers(); checkPostSaveIntent(); });
+    FIELDS.forEach(id=>$(id).addEventListener("input",saveToLS));
+
+    function buildCopyText(){return `PROTOCOLO: ${$("protocolo").value.trim()}\nCIRCUITO: ${$("circuito").value.trim()}\nCLIENTE: ${$("cliente").value.trim()}\nSERIAL: ${$("serial").value.trim()}\n\nTRATATIVA:\n${$("tratativa").value.trim()}`.trim();}
+
+    async function copyAll(){
+      if(!$("tratativa").value.trim()){showToast("err","Nada para copiar.");return;}
+      try{await navigator.clipboard.writeText(buildCopyText());}
+      catch{const ta=document.createElement("textarea");ta.value=buildCopyText();document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();}
+      showToast("ok","Texto copiado!");
+    }
+
+    function clearAll(){
+      if(FIELDS.some(id=>$(id).value.trim())&&!confirm("Deseja limpar todos os campos?"))return;
+      FIELDS.forEach(id=>{$(id).value="";localStorage.removeItem(`gpon_${id}`);});
+      _retornoSelecionado=null; $("btnRetornoSim").classList.remove("active"); $("btnRetornoNao").classList.remove("active");
+      showToast("ok","Campos limpos."); $("protocolo").focus();
+    }
+
+    // ── EDIT TODAY ───────────────────────────────────────────
+    let todayOriginalValues={};
+
+    async function copyTodayRow(rowIndex){
+      const row=$(`today-row-${rowIndex}`);
+      let p="",ci="",cl="",s="",t="";
+      row.querySelectorAll(".edit-input").forEach(i=>{
+        if(i.dataset.field==="protocolo")p=i.value.trim(); if(i.dataset.field==="circuito")ci=i.value.trim();
+        if(i.dataset.field==="cliente")cl=i.value.trim();  if(i.dataset.field==="serial")s=i.value.trim();
+        if(i.dataset.field==="tratativa")t=i.value.trim();
       });
-      
-      showToast("ok", "Campos limpos com sucesso.");
-      $("protocolo").focus();
+      const text=`PROTOCOLO: ${p}\nCIRCUITO: ${ci}\nCLIENTE: ${cl}\nSERIAL: ${s}\n\nTRATATIVA:\n${t}`.trim();
+      try{await navigator.clipboard.writeText(text);}
+      catch{const ta=document.createElement("textarea");ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();}
+      showToast("ok","Registro copiado!");
     }
 
-    // ─── EVENT LISTENERS ────────────────────────────────────
-    $("btnSave").addEventListener("click", save);
-    $("btnCopy").addEventListener("click", copyAll);
-    $("btnClear").addEventListener("click", clearAll);
+    function editTodayRow(rowIndex){
+      const row=$(`today-row-${rowIndex}`);
+      todayOriginalValues[rowIndex]={};
+      row.querySelectorAll(".edit-input").forEach(i=>{todayOriginalValues[rowIndex][i.dataset.field]=i.value;});
+      row.querySelectorAll(".view-mode").forEach(e=>e.style.display="none");
+      row.querySelectorAll(".edit-mode").forEach(e=>e.style.display="block");
+      row.style.background="var(--blue-light)";
+    }
 
-    document.addEventListener("keydown", (e) => {
-      const key = e.key.toLowerCase();
-      if ((e.ctrlKey || e.metaKey) && !e.shiftKey && key === "s") { e.preventDefault(); save(); }
-      if ((e.ctrlKey || e.metaKey) && key === "l") { e.preventDefault(); clearAll(); }
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && key === "c") { e.preventDefault(); copyAll(); }
+    function cancelTodayEdit(rowIndex){
+      const row=$(`today-row-${rowIndex}`);
+      if(todayOriginalValues[rowIndex]) row.querySelectorAll(".edit-input").forEach(i=>{i.value=todayOriginalValues[rowIndex][i.dataset.field]||"";});
+      row.querySelectorAll(".edit-mode").forEach(e=>e.style.display="none");
+      row.querySelectorAll(".view-mode").forEach(e=>e.style.display="");
+      row.style.background="";
+    }
+
+    async function saveTodayRow(rowIndex){
+      const row=$(`today-row-${rowIndex}`); const payload={row_index:rowIndex};
+      row.querySelectorAll(".edit-input").forEach(i=>{payload[i.dataset.field]=i.value.trim();});
+      if(!payload.tratativa){showToast("err","TRATATIVA não pode estar vazio.");return;}
+      try{
+        const res=await fetch("/update",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+        const data=await res.json();
+        if(data.ok){showToast("ok","Atualizado!");setTimeout(()=>location.reload(),800);}
+        else showToast("err",data.error||"Erro.");
+      }catch{showToast("err","Erro ao conectar.");}
+    }
+
+    async function deleteTodayRow(rowIndex){
+      if(!confirm("Deletar este registro? Ação irreversível."))return;
+      try{
+        const res=await fetch("/delete",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({row_index:rowIndex})});
+        const data=await res.json();
+        if(data.ok){
+          const row=$(`today-row-${rowIndex}`);
+          row.style.transition="all .3s";row.style.opacity="0";row.style.transform="translateX(-30px)";
+          setTimeout(()=>{row.remove();if(!document.querySelectorAll(".today-item").length)setTimeout(()=>location.reload(),400);},300);
+          if(timerIntervals[rowIndex])clearInterval(timerIntervals[rowIndex]);
+          delete timerState[rowIndex];saveTS();updateFavicon();
+          await refreshStats();
+        }else showToast("err",data.error||"Erro.");
+      }catch{showToast("err","Erro ao conectar.");}
+    }
+
+    // ── EVENT LISTENERS ──────────────────────────────────────
+    $("btnSave").addEventListener("click",save);
+    $("btnCopy").addEventListener("click",copyAll);
+    $("btnClear").addEventListener("click",clearAll);
+    document.addEventListener("keydown",e=>{
+      const k=e.key.toLowerCase();
+      if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&k==="s"){e.preventDefault();save();}
+      if((e.ctrlKey||e.metaKey)&&k==="l"){e.preventDefault();clearAll();}
+      if((e.ctrlKey||e.metaKey)&&e.shiftKey&&k==="c"){e.preventDefault();copyAll();}
     });
 
-    function openPopup() {
-      window.open(window.location.href, "GPON_Popup", "width=560,height=740,resizable=yes,scrollbars=yes");
+    // ── DARK MODE ────────────────────────────────────────────
+    function toggleDark() {
+      const isDark = document.body.classList.toggle("dark");
+      localStorage.setItem("gpon_dark", isDark ? "1" : "0");
+      updateDarkBtn(isDark);
     }
-
-    // ─── EDIT TODAY RECORDS ─────────────────────────────────
-    let todayOriginalValues = {};
-
-    async function copyTodayRow(rowIndex) {
-      const row = document.getElementById(`today-row-${rowIndex}`);
-      
-      // Busca valores dos campos (seja do view ou edit mode)
-      let protocolo = '', circuito = '', cliente = '', serial = '', tratativa = '';
-      
-      row.querySelectorAll('.edit-input').forEach(input => {
-        const field = input.dataset.field;
-        const value = input.value.trim();
-        if (field === 'protocolo') protocolo = value;
-        if (field === 'circuito') circuito = value;
-        if (field === 'cliente') cliente = value;
-        if (field === 'serial') serial = value;
-        if (field === 'tratativa') tratativa = value;
-      });
-      
-      // Monta texto no formato padrão
-      const text = `PROTOCOLO: ${protocolo}
-CIRCUITO: ${circuito}
-CLIENTE: ${cliente}
-SERIAL: ${serial}
-
-TRATATIVA:
-${tratativa}`.trim();
-      
-      try {
-        await navigator.clipboard.writeText(text);
-      } catch {
-        const ta = document.createElement("textarea");
-        ta.value = text;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand("copy");
-        ta.remove();
-      }
-      
-      // Feedback visual no botão
-      const btn = row.querySelector('button[onclick*="copyTodayRow"]');
-      if (btn) {
-        const originalHTML = btn.innerHTML;
-        btn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
-        btn.style.background = "var(--ok)";
-        btn.style.color = "#fff";
-        btn.style.borderColor = "var(--ok)";
-        
-        setTimeout(() => {
-          btn.innerHTML = originalHTML;
-          btn.style.background = "";
-          btn.style.color = "";
-          btn.style.borderColor = "";
-        }, 1500);
-      }
-      
-      showToast('ok', 'Registro copiado! Agora é só colar na OS.');
-    }
-
-    function editTodayRow(rowIndex) {
-      const row = document.getElementById(`today-row-${rowIndex}`);
-      
-      // Salva valores originais
-      todayOriginalValues[rowIndex] = {};
-      row.querySelectorAll('.edit-input').forEach(input => {
-        const field = input.dataset.field;
-        todayOriginalValues[rowIndex][field] = input.value;
-      });
-      
-      // Alterna para edit mode
-      row.querySelectorAll('.view-mode').forEach(el => el.style.display = 'none');
-      row.querySelectorAll('.edit-mode').forEach(el => el.style.display = 'block');
-      row.style.background = 'var(--blue-light)';
-      row.style.borderColor = 'rgba(0,87,168,.2)';
-    }
-
-    function cancelTodayEdit(rowIndex) {
-      const row = document.getElementById(`today-row-${rowIndex}`);
-      
-      // Restaura valores originais
-      if (todayOriginalValues[rowIndex]) {
-        row.querySelectorAll('.edit-input').forEach(input => {
-          const field = input.dataset.field;
-          input.value = todayOriginalValues[rowIndex][field];
-        });
-      }
-      
-      // Volta para view mode
-      row.querySelectorAll('.edit-mode').forEach(el => el.style.display = 'none');
-      row.querySelectorAll('.view-mode').forEach(el => el.style.display = '');
-      row.style.background = '';
-      row.style.borderColor = '';
-    }
-
-    async function saveTodayRow(rowIndex) {
-      const row = document.getElementById(`today-row-${rowIndex}`);
-      const payload = { row_index: rowIndex };
-      
-      row.querySelectorAll('.edit-input').forEach(input => {
-        payload[input.dataset.field] = input.value.trim();
-      });
-      
-      if (!payload.tratativa) {
-        showToast('err', 'O campo TRATATIVA não pode estar vazio.');
-        return;
-      }
-      
-      try {
-        const res = await fetch('/update', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify(payload)
-        });
-        
-        const data = await res.json();
-        
-        if (data.ok) {
-          showToast('ok', 'Registro atualizado com sucesso!');
-          
-          // Recarrega a página para atualizar a lista
-          setTimeout(() => location.reload(), 1000);
-        } else {
-          showToast('err', data.error || 'Erro ao atualizar.');
-        }
-      } catch {
-        showToast('err', 'Erro ao conectar com o servidor.');
+    function updateDarkBtn(isDark) {
+      const lbl  = document.getElementById("darkLabel");
+      const icon = document.getElementById("darkIcon");
+      if (!lbl || !icon) return;
+      if (isDark) {
+        lbl.textContent = "Claro";
+        icon.innerHTML  = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+      } else {
+        lbl.textContent = "Escuro";
+        icon.innerHTML  = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
       }
     }
+    (function() {
+      const saved = localStorage.getItem("gpon_dark");
+      if (saved === "1") { document.body.classList.add("dark"); updateDarkBtn(true); }
+    })();
 
-    async function deleteTodayRow(rowIndex) {
-      if (!confirm('Tem certeza que deseja deletar este registro? Esta ação não pode ser desfeita.')) {
-        return;
-      }
-      
-      try {
-        const res = await fetch('/delete', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({ row_index: rowIndex })
-        });
-        
-        const data = await res.json();
-        
-        if (data.ok) {
-          const row = document.getElementById(`today-row-${rowIndex}`);
-          row.style.transition = 'all .3s ease';
-          row.style.opacity = '0';
-          row.style.transform = 'translateX(-30px)';
-          
-          setTimeout(() => {
-            row.remove();
-            showToast('ok', 'Registro deletado com sucesso!');
-            
-            // Se não houver mais registros, recarrega para esconder a seção
-            const remaining = document.querySelectorAll('.today-item').length;
-            if (remaining === 0) {
-              setTimeout(() => location.reload(), 800);
-            }
-          }, 300);
-        } else {
-          showToast('err', data.error || 'Erro ao deletar.');
-        }
-      } catch {
-        showToast('err', 'Erro ao conectar com o servidor.');
-      }
-    }
+    function openPopup(){window.open(window.location.href,"GPON_Popup","width=560,height=820,resizable=yes,scrollbars=yes");}
   </script>
 </body>
 </html>

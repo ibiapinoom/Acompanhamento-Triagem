@@ -7,10 +7,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="/static/algar.css">
+  <link rel="icon" id="favicon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%2300A887'/></svg>">
 </head>
 <body>
 
-  <!-- ── TOPBAR ──────────────────────────────────────────── -->
   <header class="topbar">
     <div class="container">
       <div class="brand">
@@ -18,43 +18,80 @@
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
         </div>
         <div class="brand-text">
-          <span class="brand-title">Tratativas GPON</span>
-          <span class="brand-sub">Algar · Registro Técnico</span>
+          <span class="brand-title">Tratativas <em>GPON</em></span>
+          <span class="brand-sub">Algar Telecom · NOC</span>
         </div>
       </div>
-      <nav class="nav">
-        <a href="/">Tratativa</a>
-        <a href="/historico" class="active">Histórico</a>
-      </nav>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button class="btn-darkmode" id="btnDark" onclick="toggleDark()">
+          <svg id="darkIcon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <span id="darkLabel">Escuro</span>
+        </button>
+        <nav class="nav">
+          <a href="/">Tratativa</a>
+          <a href="/historico" class="active">Histórico</a>
+        </nav>
+      </div>
     </div>
   </header>
 
-  <!-- ── PAGE ────────────────────────────────────────────── -->
   <main class="container page-content">
 
-    <!-- Page header + stat -->
+    <!-- ── CABEÇALHO + STATS ────────────────────────────────── -->
     <div class="page-header">
       <div class="page-header-inner">
         <div>
           <h1 class="page-title">Histórico de Atendimentos</h1>
           <p class="page-subtitle">Registros filtrados e produtividade por dia</p>
         </div>
-        <div class="stat">
-          <div>
-            <div class="stat-num">{{ total }}</div>
-            <div class="stat-label">registros<br>no filtro</div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:stretch;">
+          <div class="stat">
+            <div>
+              <div class="stat-num">{{ total }}</div>
+              <div class="stat-label">registros<br>no filtro</div>
+            </div>
           </div>
+          <div class="stat" style="border-color:rgba(0,168,135,.2); background:var(--ok-soft);">
+            <div>
+              <div class="stat-num" style="color:var(--green-dark);">{{ hist_stats.retidos }}</div>
+              <div class="stat-label">retidos</div>
+            </div>
+          </div>
+          <div class="stat" style="border-color:rgba(245,158,11,.2); background:var(--warn-soft);">
+            <div>
+              <div class="stat-num" style="color:#92400e;">{{ hist_stats.campo }}</div>
+              <div class="stat-label">campo</div>
+            </div>
+          </div>
+          {% if hist_stats.pct >= 40 %}
+          <div class="stat" style="border-color:rgba(0,168,135,.25); background:var(--ok-soft);">
+            <div>
+              <div class="stat-num" style="color:var(--green-dark);">{{ hist_stats.pct }}%</div>
+              <div class="stat-label">taxa<br>retido</div>
+            </div>
+          </div>
+          {% else %}
+          <div class="stat" style="border-color:rgba(229,62,62,.25); background:var(--danger-soft);">
+            <div>
+              <div class="stat-num" style="color:var(--danger);">{{ hist_stats.pct }}%</div>
+              <div class="stat-label">taxa<br>retido</div>
+            </div>
+          </div>
+          {% endif %}
         </div>
       </div>
     </div>
 
-    <!-- Hint -->
+    <!-- ── WRAPPER DE CONTEÚDO (alinhamento uniforme) ──────── -->
+    <div class="hist-content">
+
+    <!-- ── HINT ─────────────────────────────────────────────── -->
     <div class="hint">
       <span class="hint-dot"></span>
       <span>Excel: <b>{{ excel_path }}</b></span>
     </div>
 
-    <!-- Filter card -->
+    <!-- ── FILTROS ───────────────────────────────────────────── -->
     <div class="card">
       <div class="card-header">
         <div class="card-icon">
@@ -65,33 +102,19 @@
           <div class="card-subtitle">Refine por período, protocolo ou cliente</div>
         </div>
       </div>
-
       <form method="get" action="/historico">
         <div class="filter-bar">
-          <div class="field">
-            <label>Data inicial</label>
-            <input type="date" name="date_from" value="{{ filters.date_from }}">
-          </div>
-          <div class="field">
-            <label>Data final</label>
-            <input type="date" name="date_to" value="{{ filters.date_to }}">
-          </div>
-          <div class="field">
-            <label>Protocolo</label>
-            <input type="text" name="protocolo" value="{{ filters.protocolo }}" placeholder="Contém...">
-          </div>
-          <div class="field">
-            <label>Cliente</label>
-            <input type="text" name="cliente" value="{{ filters.cliente }}" placeholder="Contém...">
-          </div>
+          <div class="field"><label>Data inicial</label><input type="date" name="date_from" value="{{ filters.date_from }}"></div>
+          <div class="field"><label>Data final</label><input type="date" name="date_to" value="{{ filters.date_to }}"></div>
+          <div class="field"><label>Protocolo</label><input type="text" name="protocolo" value="{{ filters.protocolo }}" placeholder="Contém..."></div>
+          <div class="field"><label>Cliente</label><input type="text" name="cliente" value="{{ filters.cliente }}" placeholder="Contém..."></div>
         </div>
-
         <div class="actions">
           <button class="btn-primary" type="submit">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
             Buscar
           </button>
-          <a class="btn-ghost" href="/historico" style="text-decoration:none; padding:11px 20px; border-radius:16px; font-size:14px; font-weight:600; display:inline-flex; align-items:center; gap:7px; color:var(--text-2); border:1.5px solid var(--border); transition:all .22s;">
+          <a class="btn-ghost" href="/historico" style="text-decoration:none; padding:11px 22px; border-radius:999px; font-size:14px; font-weight:700; display:inline-flex; align-items:center; gap:7px; color:var(--text-2); border:1.5px solid var(--border-card); transition:all .22s;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.36"/></svg>
             Limpar filtros
           </a>
@@ -99,54 +122,110 @@
       </form>
     </div>
 
-    <!-- Data grid: productivity + records -->
+    <!-- ── CONSOLIDADO MENSAL ────────────────────────────────── -->
+    {% if monthly_counts and monthly_counts|length > 0 %}
+    <div class="card" style="margin-top:16px; animation-delay:.06s;">
+      <div class="card-header">
+        <div class="card-icon">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div>
+          <div class="card-title">Consolidado Mensal</div>
+          <div class="card-subtitle">Indicadores de retenção por mês</div>
+        </div>
+      </div>
+      <div class="monthly-table-wrap">
+        <table class="monthly-table">
+          <thead>
+            <tr>
+              <th>Mês</th>
+              <th class="col-num">OS</th>
+              <th class="col-num">Retidas</th>
+              <th class="col-num">Campo</th>
+              <th class="col-num">% Retido</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for m in monthly_counts %}
+            <tr>
+              <td class="col-month">{{ m.label }}</td>
+              <td class="col-num"><span class="monthly-badge monthly-badge--total">{{ m.qtd }}</span></td>
+              <td class="col-num"><span class="monthly-badge monthly-badge--retido">{{ m.retidos }}</span></td>
+              <td class="col-num"><span class="monthly-badge monthly-badge--campo">{{ m.campo }}</span></td>
+              <td class="col-num">
+                <span class="monthly-pct {% if m.pct >= 40 %}monthly-pct--green{% else %}monthly-pct--red{% endif %}">{{ m.pct }}%</span>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- ── GRID: PRODUTIVIDADE + REGISTROS ───────────────────── -->
     <div class="hist-grid">
 
-      <!-- Productivity sidebar -->
+      <!-- Sidebar produtividade -->
       <div class="card" style="animation-delay:.08s;">
         <div class="card-header">
           <div class="card-icon">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
           </div>
           <div>
-            <div class="card-title">Produtividade</div>
-            <div class="card-subtitle">Atendimentos por dia</div>
+            <div class="card-title">Produtividade por Dia</div>
+            <div class="card-subtitle">OS · Retidas · Campo · % Retido</div>
           </div>
         </div>
-
         <div class="prod-list">
           {% if counts and counts|length > 0 %}
             {% for c in counts %}
-              <div class="prod-item">
-                <span class="prod-day">{{ c.dia }}</span>
-                <span class="prod-badge">{{ c.qtd }}</span>
+              <div class="prod-item prod-item--expanded">
+                <div class="prod-item-left">
+                  <span class="prod-day">{{ c.dia }}</span>
+                  <div class="prod-item-detail">
+                    <span class="prod-detail-chip chip-retido" title="Retidas">{{ c.retidos }}</span>
+                    <span class="prod-detail-chip chip-campo"  title="Campo">{{ c.campo }}</span>
+                  </div>
+                </div>
+                <div class="prod-item-right">
+                  <span class="prod-badge">{{ c.qtd }}</span>
+                  <span class="prod-pct {% if c.pct >= 40 %}prod-pct--green{% else %}prod-pct--red{% endif %}">{{ c.pct }}%</span>
+                </div>
               </div>
             {% endfor %}
           {% else %}
             <div class="empty-state">
-              <div class="empty-icon">
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              </div>
+              <div class="empty-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
               <div>Sem registros no<br>filtro atual</div>
             </div>
           {% endif %}
         </div>
       </div>
 
-      <!-- Records table -->
+      <!-- Tabela de registros -->
       <div class="card" style="animation-delay:.12s;">
-        <div class="card-header">
+        <div class="card-header" style="flex-wrap:wrap; gap:8px;">
           <div class="card-icon">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
           </div>
-          <div>
+          <div style="flex:1; min-width:0;">
             <div class="card-title">Registros</div>
-            <div class="card-subtitle">{{ total }} resultado{% if total != 1 %}s{% endif %} encontrado{% if total != 1 %}s{% endif %}</div>
+            <div class="card-subtitle" id="recordsSubtitle">{{ total }} resultado{% if total != 1 %}s{% endif %} encontrado{% if total != 1 %}s{% endif %}</div>
+          </div>
+          <!-- Seletor de registros por página -->
+          <div class="page-size-wrap">
+            <span class="page-size-label">Exibir:</span>
+            <div class="page-size-btns">
+              <button class="btn-page-size active" data-size="10" onclick="setPageSize(10)">10</button>
+              <button class="btn-page-size" data-size="50"  onclick="setPageSize(50)">50</button>
+              <button class="btn-page-size" data-size="100" onclick="setPageSize(100)">100</button>
+            </div>
           </div>
         </div>
 
         <div class="table-wrap">
-          <table>
+          <table id="recordsTable">
             <thead>
               <tr>
                 <th>Data / Hora</th>
@@ -155,12 +234,14 @@
                 <th>Circuito</th>
                 <th>Serial</th>
                 <th>Tratativa</th>
+                <th>Status</th>
                 <th style="text-align:center; width:90px;">Ações</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody id="recordsTbody">
               {% for r in records %}
-              <tr data-row="{{ r.row_index }}" id="row-{{ r.row_index }}">
+              {% set status_up = r.status.upper() %}
+              <tr data-row="{{ r.row_index }}" id="row-{{ r.row_index }}" class="record-row{% if 'RETIDO' in status_up or 'CAMPO' in status_up %} row-done{% endif %}">
                 <td class="td-dt">{{ r.data_hora }}</td>
                 <td>
                   <span class="td-badge view-mode">{{ r.protocolo }}</span>
@@ -171,16 +252,26 @@
                   <input type="text" class="edit-input edit-mode" style="display:none;" value="{{ r.cliente }}" data-field="cliente">
                 </td>
                 <td>
-                  <span class="view-mode" style="font-size:12px; color:var(--text-2);">{{ r.circuito }}</span>
+                  <span class="view-mode td-secondary">{{ r.circuito }}</span>
                   <input type="text" class="edit-input edit-mode" style="display:none;" value="{{ r.circuito }}" data-field="circuito">
                 </td>
                 <td>
-                  <span class="view-mode" style="font-size:12px; color:var(--text-3);">{{ r.serial }}</span>
+                  <span class="view-mode td-secondary">{{ r.serial }}</span>
                   <input type="text" class="edit-input edit-mode" style="display:none;" value="{{ r.serial }}" data-field="serial">
                 </td>
                 <td class="td-tratativa">
                   <span class="view-mode">{{ r.tratativa }}</span>
-                  <textarea class="edit-input edit-mode" style="display:none; min-height:80px;" data-field="tratativa">{{ r.tratativa }}</textarea>
+                  <textarea class="edit-input edit-mode" style="display:none;min-height:80px;" data-field="tratativa">{{ r.tratativa }}</textarea>
+                </td>
+                <td>
+                  {% if 'RETIDO' in status_up %}
+                    <span class="status-flag flag-retido view-mode">✔ Retido</span>
+                  {% elif 'CAMPO' in status_up %}
+                    <span class="status-flag flag-campo view-mode">🔧 Campo</span>
+                  {% else %}
+                    <span class="view-mode td-muted">—</span>
+                  {% endif %}
+                  <input type="text" class="edit-input edit-mode" style="display:none;" value="{{ r.status }}" data-field="status">
                 </td>
                 <td style="text-align:center;">
                   <div class="edit-actions view-mode">
@@ -204,12 +295,10 @@
               {% endfor %}
 
               {% if records|length == 0 %}
-              <tr>
-                <td colspan="7">
+              <tr class="record-row">
+                <td colspan="8">
                   <div class="empty-state">
-                    <div class="empty-icon">
-                      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                    </div>
+                    <div class="empty-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
                     <div>Nenhum resultado encontrado<br>para os filtros aplicados</div>
                   </div>
                 </td>
@@ -219,121 +308,198 @@
           </table>
         </div>
 
+        <!-- Paginação -->
+        <div class="pagination" id="pagination"></div>
       </div>
     </div>
 
+    </div><!-- fim hist-content -->
   </main>
 
   <script>
+    // ── DARK MODE ─────────────────────────────────────────────
+    function toggleDark() {
+      const isDark = document.body.classList.toggle("dark");
+      localStorage.setItem("gpon_dark", isDark ? "1" : "0");
+      updateDarkBtn(isDark);
+    }
+    function updateDarkBtn(isDark) {
+      const lbl = document.getElementById("darkLabel");
+      const icon = document.getElementById("darkIcon");
+      if (!lbl || !icon) return;
+      if (isDark) {
+        lbl.textContent = "Claro";
+        icon.innerHTML = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+      } else {
+        lbl.textContent = "Escuro";
+        icon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+      }
+    }
+    (function () {
+      const saved = localStorage.getItem("gpon_dark");
+      if (saved === "1") { document.body.classList.add("dark"); updateDarkBtn(true); }
+    })();
+
+    // ── PAGINAÇÃO ─────────────────────────────────────────────
+    let currentPage = 1;
+    let pageSize    = parseInt(localStorage.getItem("gpon_page_size") || "10");
+
+    function getAllRows() {
+      return Array.from(document.querySelectorAll("#recordsTbody .record-row"));
+    }
+
+    function renderPagination() {
+      const rows  = getAllRows();
+      const total = rows.length;
+      const pages = Math.ceil(total / pageSize);
+      const pag   = document.getElementById("pagination");
+      const sub   = document.getElementById("recordsSubtitle");
+
+      // Mostra/esconde linhas
+      rows.forEach((row, i) => {
+        const inPage = i >= (currentPage - 1) * pageSize && i < currentPage * pageSize;
+        row.style.display = inPage ? "" : "none";
+      });
+
+      // Subtítulo
+      if (sub) {
+        const start = Math.min((currentPage - 1) * pageSize + 1, total);
+        const end   = Math.min(currentPage * pageSize, total);
+        sub.textContent = total > 0
+          ? `Exibindo ${start}–${end} de ${total} registro${total !== 1 ? "s" : ""}`
+          : "Nenhum resultado encontrado";
+      }
+
+      // Paginação
+      if (!pag) return;
+      if (pages <= 1) { pag.innerHTML = ""; return; }
+
+      let html = `<div class="pag-inner">`;
+
+      // Prev
+      html += `<button class="pag-btn${currentPage === 1 ? " pag-disabled" : ""}" onclick="goPage(${currentPage - 1})" ${currentPage === 1 ? "disabled" : ""}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>`;
+
+      // Páginas
+      const range = [];
+      for (let p = 1; p <= pages; p++) {
+        if (p === 1 || p === pages || (p >= currentPage - 2 && p <= currentPage + 2)) {
+          range.push(p);
+        } else if (range[range.length - 1] !== "…") {
+          range.push("…");
+        }
+      }
+      range.forEach(p => {
+        if (p === "…") {
+          html += `<span class="pag-ellipsis">…</span>`;
+        } else {
+          html += `<button class="pag-btn${p === currentPage ? " pag-active" : ""}" onclick="goPage(${p})">${p}</button>`;
+        }
+      });
+
+      // Next
+      html += `<button class="pag-btn${currentPage === pages ? " pag-disabled" : ""}" onclick="goPage(${currentPage + 1})" ${currentPage === pages ? "disabled" : ""}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>`;
+
+      html += `</div>`;
+      pag.innerHTML = html;
+    }
+
+    function goPage(p) {
+      const pages = Math.ceil(getAllRows().length / pageSize);
+      if (p < 1 || p > pages) return;
+      currentPage = p;
+      renderPagination();
+      // Scroll suave ao topo da tabela
+      document.getElementById("recordsTable")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function setPageSize(size) {
+      pageSize = size;
+      currentPage = 1;
+      localStorage.setItem("gpon_page_size", size);
+      // Atualiza botões ativos
+      document.querySelectorAll(".btn-page-size").forEach(b => {
+        b.classList.toggle("active", parseInt(b.dataset.size) === size);
+      });
+      renderPagination();
+    }
+
+    // Init paginação
+    window.addEventListener("DOMContentLoaded", () => {
+      // Restaura tamanho de página salvo
+      const saved = parseInt(localStorage.getItem("gpon_page_size") || "10");
+      pageSize = saved;
+      document.querySelectorAll(".btn-page-size").forEach(b => {
+        b.classList.toggle("active", parseInt(b.dataset.size) === saved);
+      });
+      renderPagination();
+    });
+
+    // ── EDIT ──────────────────────────────────────────────────
     let originalValues = {};
 
     function editRow(rowIndex) {
       const row = document.getElementById(`row-${rowIndex}`);
-      
-      // Salva valores originais
       originalValues[rowIndex] = {};
-      row.querySelectorAll('.edit-input').forEach(input => {
-        const field = input.dataset.field;
-        originalValues[rowIndex][field] = input.value;
-      });
-      
-      // Esconde view mode, mostra edit mode
-      row.querySelectorAll('.view-mode').forEach(el => el.style.display = 'none');
-      row.querySelectorAll('.edit-mode').forEach(el => el.style.display = 'block');
-      row.classList.add('row-edit-mode');
+      row.querySelectorAll(".edit-input").forEach(i => { originalValues[rowIndex][i.dataset.field] = i.value; });
+      row.querySelectorAll(".view-mode").forEach(e => e.style.display = "none");
+      row.querySelectorAll(".edit-mode").forEach(e => e.style.display = "block");
+      row.classList.add("row-edit-mode");
     }
 
     function cancelEdit(rowIndex) {
       const row = document.getElementById(`row-${rowIndex}`);
-      
-      // Restaura valores originais
       if (originalValues[rowIndex]) {
-        row.querySelectorAll('.edit-input').forEach(input => {
-          const field = input.dataset.field;
-          input.value = originalValues[rowIndex][field];
-        });
+        row.querySelectorAll(".edit-input").forEach(i => { i.value = originalValues[rowIndex][i.dataset.field]; });
       }
-      
-      // Volta ao view mode
-      row.querySelectorAll('.edit-mode').forEach(el => el.style.display = 'none');
-      row.querySelectorAll('.view-mode').forEach(el => el.style.display = '');
-      row.classList.remove('row-edit-mode');
+      row.querySelectorAll(".edit-mode").forEach(e => e.style.display = "none");
+      row.querySelectorAll(".view-mode").forEach(e => e.style.display = "");
+      row.classList.remove("row-edit-mode");
     }
 
     async function saveRow(rowIndex) {
       const row = document.getElementById(`row-${rowIndex}`);
       const payload = { row_index: rowIndex };
-      
-      row.querySelectorAll('.edit-input').forEach(input => {
-        payload[input.dataset.field] = input.value.trim();
-      });
-      
-      if (!payload.tratativa) {
-        alert('O campo TRATATIVA não pode estar vazio.');
-        return;
-      }
-      
+      row.querySelectorAll(".edit-input").forEach(i => { payload[i.dataset.field] = i.value.trim(); });
+      if (!payload.tratativa) { alert("O campo TRATATIVA não pode estar vazio."); return; }
       try {
-        const res = await fetch('/update', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify(payload)
-        });
-        
+        const res  = await fetch("/update", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
         const data = await res.json();
-        
         if (data.ok) {
-          // Atualiza view mode com novos valores
           row.querySelector('[data-field="protocolo"]').previousElementSibling.textContent = payload.protocolo;
-          row.querySelector('[data-field="cliente"]').previousElementSibling.textContent = payload.cliente;
-          row.querySelector('[data-field="circuito"]').previousElementSibling.textContent = payload.circuito;
-          row.querySelector('[data-field="serial"]').previousElementSibling.textContent = payload.serial;
+          row.querySelector('[data-field="cliente"]').previousElementSibling.textContent   = payload.cliente;
+          row.querySelector('[data-field="circuito"]').previousElementSibling.textContent  = payload.circuito;
+          row.querySelector('[data-field="serial"]').previousElementSibling.textContent    = payload.serial;
           row.querySelector('[data-field="tratativa"]').previousElementSibling.textContent = payload.tratativa;
-          
+          row.querySelector('[data-field="status"]').previousElementSibling.textContent    = payload.status;
           cancelEdit(rowIndex);
-          
-          // Feedback visual
-          row.style.background = 'var(--ok-soft)';
-          setTimeout(() => { row.style.background = ''; }, 1500);
+          row.style.transition = "background .3s";
+          row.style.background = "rgba(0,168,135,.08)";
+          setTimeout(() => { row.style.background = ""; }, 2000);
         } else {
-          alert('Erro ao atualizar: ' + (data.error || 'Erro desconhecido'));
+          alert("Erro ao atualizar: " + (data.error || "Erro desconhecido"));
         }
-      } catch (e) {
-        alert('Erro ao conectar com o servidor.');
-      }
+      } catch { alert("Erro ao conectar com o servidor."); }
     }
 
     async function deleteRow(rowIndex) {
-      if (!confirm('Tem certeza que deseja deletar este registro? Esta ação não pode ser desfeita.')) {
-        return;
-      }
-      
+      if (!confirm("Tem certeza que deseja deletar este registro? Esta ação não pode ser desfeita.")) return;
       try {
-        const res = await fetch('/delete', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({ row_index: rowIndex })
-        });
-        
+        const res  = await fetch("/delete", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ row_index: rowIndex }) });
         const data = await res.json();
-        
         if (data.ok) {
           const row = document.getElementById(`row-${rowIndex}`);
-          row.style.transition = 'all .3s ease';
-          row.style.opacity = '0';
-          row.style.transform = 'translateX(-20px)';
-          setTimeout(() => {
-            row.remove();
-            // Atualiza contador se existir
-            const total = document.querySelectorAll('tbody tr').length - 1; // -1 para excluir a própria linha deletada
-            location.reload(); // Recarrega para atualizar contadores
-          }, 300);
+          row.style.transition = "all .3s ease";
+          row.style.opacity = "0";
+          row.style.transform = "translateX(-20px)";
+          setTimeout(() => { row.remove(); renderPagination(); }, 300);
         } else {
-          alert('Erro ao deletar: ' + (data.error || 'Erro desconhecido'));
+          alert("Erro ao deletar: " + (data.error || "Erro desconhecido"));
         }
-      } catch (e) {
-        alert('Erro ao conectar com o servidor.');
-      }
+      } catch { alert("Erro ao conectar com o servidor."); }
     }
   </script>
 
