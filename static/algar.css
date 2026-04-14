@@ -520,6 +520,18 @@ tbody td { padding: 11px 14px; color: var(--text-1); vertical-align: top; line-h
 .today-item.item-red .timer-label,
 .today-item.item-red .timer-countdown { color: var(--danger); }
 
+/* Botões antecipados dentro do timer (cliente respondeu antes do tempo) */
+.timer-early-btns {
+  display: flex; gap: 6px; flex-wrap: wrap; align-items: center;
+  margin-left: 4px;
+}
+.timer-early-btns button {
+  font-family: var(--font); font-size: 11px; font-weight: 700;
+  padding: 4px 11px; border-radius: var(--r-full); cursor: pointer;
+  border: 1px solid; transition: all var(--ease);
+  display: inline-flex; align-items: center; gap: 4px;
+}
+
 /* ══════════════════════════════════════════════════════════
    INLINE ACTION BLOCKS
 ══════════════════════════════════════════════════════════ */
@@ -692,6 +704,10 @@ body.dark .timer-countdown          { color: #fbbf24; }
 body.dark .today-item.item-red .timer-block          { background: rgba(248,113,113,.08); border-color: rgba(248,113,113,.22); }
 body.dark .today-item.item-red .timer-label,
 body.dark .today-item.item-red .timer-countdown      { color: var(--danger); }
+body.dark .timer-early-btns .btn-inline-retido { background: rgba(0,196,160,.10); color: var(--green-mid); border-color: rgba(0,196,160,.22) !important; }
+body.dark .timer-early-btns .btn-inline-retido:hover { background: var(--green); color: #fff; }
+body.dark .timer-early-btns .btn-inline-campo  { background: rgba(251,191,36,.10); color: #fbbf24; border-color: rgba(251,191,36,.25) !important; }
+body.dark .timer-early-btns .btn-inline-campo:hover  { background: rgba(251,191,36,.20); }
 
 /* Inline actions */
 body.dark .inline-action-block--orange { background: rgba(251,191,36,.07);  border-color: rgba(251,191,36,.22); }

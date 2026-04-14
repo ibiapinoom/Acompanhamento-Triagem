@@ -171,7 +171,7 @@
 
   <script>
     // ── CONSTANTES (altere para testes) ──────────────────────
-    const TIMER_DURATION = 30;
+    const TIMER_DURATION = 30 * 60;
     const WARN_THRESHOLD = 10;
     const MAX_TENTATIVAS = 2;
     const LS_KEY         = "gpon_timers";
@@ -273,6 +273,10 @@
         <div class="timer-block">
           <span class="timer-label" id="timer-label-${rowIndex}">Tentativa ${st.tentativas}/${MAX_TENTATIVAS} · Retorno em:</span>
           <span class="timer-countdown" id="timer-countdown-${rowIndex}">${fmtSecs(remaining)}</span>
+          <div class="timer-early-btns">
+            <button class="btn-inline-retido" onclick="finalizarDesfechoAntecipado(${rowIndex},'RETIDO')">✔ Retido</button>
+            <button class="btn-inline-campo"  onclick="finalizarDesfechoAntecipado(${rowIndex},'CAMPO')">🔧 Campo</button>
+          </div>
         </div>`;
     }
 
@@ -316,6 +320,14 @@
       renderTimerArea(rowIndex);
       tickTimer(rowIndex);
       updateFavicon();
+    }
+
+    // ── FINALIZA DESFECHO ANTECIPADO (cliente respondeu antes do timer) ──────
+    async function finalizarDesfechoAntecipado(rowIndex, desfecho) {
+      // Interrompe o setInterval imediatamente
+      if (timerIntervals[rowIndex]) { clearInterval(timerIntervals[rowIndex]); delete timerIntervals[rowIndex]; }
+      // Chama o fluxo normal de desfecho
+      await finalizarDesfecho(rowIndex, desfecho);
     }
 
     // ── FINALIZA DESFECHO ────────────────────────────────────
@@ -612,7 +624,14 @@
     window.addEventListener("DOMContentLoaded",()=>{ loadFromLS(); bootstrapTimers(); checkPostSaveIntent(); });
     FIELDS.forEach(id=>$(id).addEventListener("input",saveToLS));
 
-    function buildCopyText(){return `PROTOCOLO: ${$("protocolo").value.trim()}\nCIRCUITO: ${$("circuito").value.trim()}\nCLIENTE: ${$("cliente").value.trim()}\nSERIAL: ${$("serial").value.trim()}\n\nTRATATIVA:\n${$("tratativa").value.trim()}`.trim();}
+    function buildCopyText(){
+      const s = $("serial").value.trim();
+      const t = $("tratativa").value.trim();
+      const parts = [];
+      if (s) parts.push(`Serial: ${s}`);
+      if (t) parts.push(t);
+      return parts.join("  |  ");
+    }
 
     async function copyAll(){
       if(!$("tratativa").value.trim()){showToast("err","Nada para copiar.");return;}
@@ -639,7 +658,10 @@
         if(i.dataset.field==="cliente")cl=i.value.trim();  if(i.dataset.field==="serial")s=i.value.trim();
         if(i.dataset.field==="tratativa")t=i.value.trim();
       });
-      const text=`PROTOCOLO: ${p}\nCIRCUITO: ${ci}\nCLIENTE: ${cl}\nSERIAL: ${s}\n\nTRATATIVA:\n${t}`.trim();
+      const parts = [];
+      if (s)  parts.push(`Serial: ${s}`);
+      if (t)  parts.push(t);
+      const text = parts.join("  |  ");
       try{await navigator.clipboard.writeText(text);}
       catch{const ta=document.createElement("textarea");ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();}
       showToast("ok","Registro copiado!");
