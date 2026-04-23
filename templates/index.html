@@ -8,6 +8,148 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="/static/algar.css">
   <link rel="icon" id="favicon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%230057A8'/></svg>">
+  <style>
+    /* ── BARRA DE ABAS ──────────────────────────────────────── */
+    .os-tabs-bar {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-bottom: 0;
+    }
+    .os-tabs-bar::-webkit-scrollbar { display: none; }
+
+    .os-tab {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: space-between;
+      padding: 9px 15px 10px;
+      background: var(--surface-2);
+      border: 1.5px solid var(--border-card);
+      border-bottom: none;
+      border-radius: var(--r-sm) var(--r-sm) 0 0;
+      font-family: var(--font);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-3);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all var(--ease);
+      position: relative;
+      flex-shrink: 0;
+      min-width: 138px;
+      max-width: 220px;
+      box-shadow: var(--shadow-sm);
+    }
+    .os-tab:hover { color: var(--text-1); background: var(--surface); }
+    .os-tab.active {
+      background: var(--surface);
+      color: var(--green-dark);
+      border-color: var(--border-card);
+      border-bottom: 2px solid var(--surface);
+      z-index: 2;
+      margin-bottom: -1px;
+      box-shadow: var(--shadow-md);
+    }
+    .os-tab.active::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: -1px; right: -1px;
+      height: 2px;
+      background: var(--green);
+      border-radius: var(--r-sm) var(--r-sm) 0 0;
+    }
+    .os-tab.tab-warning        { }
+    .os-tab.tab-warning::before { background: var(--warn); }
+    .os-tab.tab-done::before    { background: var(--green); }
+    .os-tab.tab-red::before     { background: var(--danger); }
+
+    body.dark .os-tab        { background: var(--surface-2); border-color: var(--border-card); color: var(--text-3); }
+    body.dark .os-tab:hover  { background: var(--surface-3); color: var(--text-1); }
+    body.dark .os-tab.active { background: var(--surface); color: var(--green); border-bottom-color: var(--surface); }
+
+    .os-tab-main {
+      min-width: 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .os-tab-label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+
+    .os-tab-status {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-3);
+      flex-shrink: 0;
+      opacity: .55;
+    }
+
+    .os-tab-timer {
+      font-size: 10px;
+      font-weight: 800;
+      background: var(--warn-soft);
+      color: #92400e;
+      padding: 1px 6px;
+      border-radius: var(--r-full);
+      letter-spacing: .3px;
+      flex-shrink: 0;
+    }
+    body.dark .os-tab-timer { background: rgba(251,191,36,.15); color: #fbbf24; }
+    .os-tab.tab-warning .os-tab-status { background: var(--warn); opacity: 1; }
+    .os-tab.tab-red .os-tab-status { background: var(--danger); opacity: 1; }
+    .os-tab.tab-done .os-tab-status { background: var(--green); opacity: 1; }
+    .os-tab.active .os-tab-status { opacity: 1; }
+
+    .os-tab-close {
+      width: 16px; height: 16px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+      background: transparent;
+      border: none;
+      font-size: 12px;
+      color: var(--text-3);
+      cursor: pointer;
+      padding: 0; flex-shrink: 0;
+      transition: all var(--ease);
+      font-family: var(--font);
+      font-weight: 700; line-height: 1;
+    }
+    .os-tab-close:hover { background: var(--danger-soft); color: var(--danger); }
+
+    .os-tab-add {
+      display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+      padding: 8px 13px 9px;
+      background: transparent;
+      border: 1.5px dashed var(--border-card);
+      border-bottom: none;
+      border-radius: var(--r-sm) var(--r-sm) 0 0;
+      font-family: var(--font); font-size: 12px; font-weight: 700;
+      color: var(--text-3); cursor: pointer;
+      transition: all var(--ease); flex-shrink: 0;
+    }
+    .os-tab-add:hover { background: var(--green-light); border-color: var(--green); color: var(--green-dark); }
+    body.dark .os-tab-add { border-color: var(--border-card); color: var(--text-3); }
+    body.dark .os-tab-add:hover { background: rgba(0,196,160,.10); border-color: var(--green); color: var(--green); }
+
+    .today-item { cursor: pointer; }
+    .today-actions button,
+    .today-edit,
+    .timer-area button { cursor: pointer; }
+
+    /* Card com canto superior esquerdo reto para unir à aba */
+    .os-card { border-radius: 0 var(--r-lg) var(--r-lg) var(--r-lg); }
+
+  </style>
 </head>
 <body>
 
@@ -41,19 +183,39 @@
 
   <main class="container page-content">
 
-    <div class="card">
+    <!-- ── ATALHOS ──────────────────────────────────────────── -->
+    
+
+    <!-- ── BARRA DE ABAS ──────────────────────────────────── -->
+    <div class="os-tabs-bar" id="osTabsBar">
+      <button class="os-tab-add" id="btnAddTab" onclick="addTab()">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nova OS
+      </button>
+    </div>
+
+    <!-- ── FORMULÁRIO ─────────────────────────────────────── -->
+    <div class="card os-card" id="activeOsCard">
+      <div class="editor-banner" id="editorBanner">
+        <div class="editor-banner-copy">
+          <span class="editor-banner-kicker" id="editorBannerKicker">Area ativa</span>
+          <strong class="editor-banner-title" id="editorBannerTitle">Nova tratativa pronta para preenchimento</strong>
+          <span class="editor-banner-text" id="editorBannerText">Preencha os campos e finalize. Para revisar uma OS salva, clique em um item de Registros de Hoje.</span>
+        </div>
+        <span class="editor-banner-tag" id="editorBannerTag">Rascunho</span>
+      </div>
       <div class="card-header">
         <div class="card-icon">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
         </div>
-        <div><div class="card-title">Dados do Atendimento</div></div>
+        <div><div class="card-title" id="osCardTitle">Dados do Atendimento</div></div>
       </div>
 
       <div class="field-group">
-        <div class="field"><label for="protocolo">Protocolo</label><input id="protocolo" type="text"></div>
-        <div class="field"><label for="circuito">Circuito</label><input id="circuito" type="text"></div>
-        <div class="field"><label for="cliente">Cliente</label><input id="cliente" type="text"></div>
-        <div class="field"><label for="serial">Serial</label><input id="serial" type="text"></div>
+        <div class="field"><label for="protocolo">Protocolo</label><input id="protocolo" type="text" autocomplete="off"></div>
+        <div class="field"><label for="circuito">Circuito</label><input id="circuito" type="text" autocomplete="off"></div>
+        <div class="field"><label for="cliente">Cliente</label><input id="cliente" type="text" autocomplete="off"></div>
+        <div class="field"><label for="serial">Serial</label><input id="serial" type="text" autocomplete="off"></div>
       </div>
 
       <div class="tratativa-wrap">
@@ -89,7 +251,7 @@
         </button>
         <button class="btn-ghost" id="btnClear">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-          Limpar
+          Limpar aba
         </button>
       </div>
 
@@ -103,6 +265,7 @@
       </div>
     </div>
 
+    <!-- ── REGISTROS DE HOJE ──────────────────────────────── -->
     {% if today_records and today_records|length > 0 %}
     <div class="card" style="margin-top:16px; animation-delay:.08s;" id="todayCard">
       <div class="card-header" style="flex-wrap:wrap; gap:8px;">
@@ -120,7 +283,6 @@
           <div class="day-stat day-stat--pct {% if stats.pct_retido >= 40 %}pct-green{% else %}pct-red{% endif %}" id="statPctBox"><span class="day-stat-num" id="statPct">{{ stats.pct_retido }}%</span><span class="day-stat-label">retido</span></div>
         </div>
       </div>
-
       <div class="today-list" id="todayList">
         {% for r in today_records %}
         <div class="today-item {{ 'item-green' if ('RETIDO' in r.status.upper() or 'CAMPO' in r.status.upper()) else '' }}"
@@ -135,6 +297,10 @@
                 {% if r.serial %}<span class="today-serial">SN: {{ r.serial }}</span>{% endif %}
                 {% if 'RETIDO' in r.status.upper() %}<span class="status-flag flag-retido">✔ Retido</span>
                 {% elif 'CAMPO' in r.status.upper() %}<span class="status-flag flag-campo">🔧 Campo</span>{% endif %}
+              </div>
+              <div class="today-hint">
+                <span class="today-hint-dot"></span>
+                Clique no card para reabrir no cabeÃ§alho e continuar a ediÃ§Ã£o.
               </div>
               <div class="today-tratativa">{{ r.tratativa }}</div>
               <div class="timer-area" id="timer-area-{{ r.row_index }}"></div>
@@ -155,6 +321,11 @@
                 <button class="btn-icon" onclick="editTodayRow({{ r.row_index }})" title="Editar"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
                 <button class="btn-icon danger" onclick="deleteTodayRow({{ r.row_index }})" title="Deletar"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
               </div>
+              <div class="status-switcher {% if 'RETIDO' in r.status.upper() %}is-retido{% elif 'CAMPO' in r.status.upper() %}is-campo{% endif %}" data-role="status-switcher" {% if 'RETIDO' not in r.status.upper() and 'CAMPO' not in r.status.upper() %}hidden{% endif %}>
+                <span class="status-switcher-label">Desfecho</span>
+                <button type="button" class="status-switcher-btn {% if 'RETIDO' in r.status.upper() %}is-active{% endif %}" data-desfecho="RETIDO" onclick="changeClosedStatus({{ r.row_index }}, 'RETIDO', event)">Retido</button>
+                <button type="button" class="status-switcher-btn {% if 'CAMPO' in r.status.upper() %}is-active{% endif %}" data-desfecho="CAMPO" onclick="changeClosedStatus({{ r.row_index }}, 'CAMPO', event)">Campo</button>
+              </div>
               <div class="edit-mode" style="display:none;gap:6px;margin-top:8px;">
                 <button class="btn-icon primary" onclick="saveTodayRow({{ r.row_index }})" title="Salvar"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
                 <button class="btn-icon" onclick="cancelTodayEdit({{ r.row_index }})" title="Cancelar"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
@@ -170,34 +341,419 @@
   </main>
 
   <script>
-    // ── CONSTANTES (altere para testes) ──────────────────────
-    const TIMER_DURATION = 30 * 60;
+    // ══════════════════════════════════════════════════════════
+    // CONSTANTES
+    // ══════════════════════════════════════════════════════════
+    const TIMER_DURATION = 30;
     const WARN_THRESHOLD = 10;
     const MAX_TENTATIVAS = 2;
     const LS_KEY         = "gpon_timers";
+    const LS_TABS_KEY    = "gpon_tabs";
+    const FIELDS         = ["protocolo","circuito","cliente","serial","tratativa"];
 
-    // ── UTILITÁRIOS ──────────────────────────────────────────
-    const $ = id => document.getElementById(id);
-    const fmtSecs = s => String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");
-    const escHtml = s => String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+    const $       = id => document.getElementById(id);
+    const fmtSecs = s  => String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");
+    const escHtml = s  => String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 
-    // ── FAVICON ──────────────────────────────────────────────
+    // ══════════════════════════════════════════════════════════
+    // FAVICON
+    // ══════════════════════════════════════════════════════════
     const FAV_NORMAL = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%230057A8'/></svg>";
     const FAV_ALERT  = "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23E53E3E'/><text x='50' y='68' text-anchor='middle' font-size='55' font-family='sans-serif' fill='white'>!</text></svg>";
-
     function updateFavicon() {
       const hasOverdue = Object.values(timerState).some(st => st && !st.concluido && st.aguardandoAcao);
       $("favicon").href = hasOverdue ? FAV_ALERT : FAV_NORMAL;
     }
 
-    // ── ESTADO DOS TIMERS ────────────────────────────────────
-    // timerState[rowIndex] = { endTs, tentativas, concluido, aguardandoAcao }
-    function loadTS()  { try { return JSON.parse(localStorage.getItem(LS_KEY)||"{}"); } catch { return {}; } }
-    function saveTS()  { localStorage.setItem(LS_KEY, JSON.stringify(timerState)); }
+    // ══════════════════════════════════════════════════════════
+    // TIMERS
+    // ══════════════════════════════════════════════════════════
+    function loadTS() { try { return JSON.parse(localStorage.getItem(LS_KEY)||"{}"); } catch { return {}; } }
+    function saveTS() { localStorage.setItem(LS_KEY, JSON.stringify(timerState)); }
     let timerState     = loadTS();
     let timerIntervals = {};
 
-    // ── COR DO CARD ──────────────────────────────────────────
+    // ══════════════════════════════════════════════════════════
+    // SISTEMA DE ABAS
+    // ══════════════════════════════════════════════════════════
+    // Cada aba: { id, label, protocolo, circuito, cliente, serial, tratativa, retorno, rowIndex? }
+    let tabs        = [];
+    let activeTabId = null;
+    let tabCounter  = 0;
+    let _retornoSelecionado = null;
+
+    function focusPrimaryField() {
+      $("protocolo")?.focus();
+    }
+
+    function normalizeTabs() {
+      if (!Array.isArray(tabs) || tabs.length === 0) {
+        tabs = [];
+        activeTabId = newTabData();
+      }
+
+      tabs = tabs.map((tab, idx) => ({
+        id: Number.isFinite(Number(tab.id)) ? Number(tab.id) : idx + 1,
+        label: /^OS #\d+$/i.test(tab.label || "") ? "" : (tab.label || ""),
+        protocolo: tab.protocolo || "",
+        circuito: tab.circuito || "",
+        cliente: tab.cliente || "",
+        serial: tab.serial || "",
+        tratativa: tab.tratativa || "",
+        retorno: typeof tab.retorno === "boolean" ? tab.retorno : null,
+        rowIndex: Number.isFinite(Number(tab.rowIndex)) ? Number(tab.rowIndex) : null,
+      }));
+
+      if (!tabs.some(t => t.id === activeTabId)) activeTabId = tabs[0].id;
+      tabCounter = Math.max(tabCounter || 0, ...tabs.map(t => t.id));
+    }
+
+    function loadTabs() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(LS_TABS_KEY)||"null");
+        if (saved && saved.tabs && saved.tabs.length > 0) {
+          tabs        = saved.tabs;
+          tabCounter  = saved.counter || tabs.length;
+          activeTabId = saved.activeId || tabs[0].id;
+          return;
+        }
+      } catch {}
+      tabCounter = 0;
+      activeTabId = newTabData();
+      normalizeTabs();
+    }
+
+    function saveTabs() {
+      localStorage.setItem(LS_TABS_KEY, JSON.stringify({ tabs, counter: tabCounter, activeId: activeTabId }));
+    }
+
+    function newTabData(label) {
+      tabCounter++;
+      const id = tabCounter;
+      tabs.push({ id, label: label || "", protocolo:"", circuito:"", cliente:"", serial:"", tratativa:"", retorno:null, rowIndex:null });
+      return id;
+    }
+
+    function getActiveTab() { return tabs.find(t => t.id === activeTabId) || tabs[0]; }
+
+    function saveActiveTabFields() {
+      const tab = getActiveTab();
+      if (!tab) return;
+      tab.protocolo = $("protocolo").value;
+      tab.circuito  = $("circuito").value;
+      tab.cliente   = $("cliente").value;
+      tab.serial    = $("serial").value;
+      tab.tratativa = $("tratativa").value;
+      tab.retorno   = _retornoSelecionado;
+      updateTabLabel(tab);
+      updateEditorBanner(tab);
+      saveTabs();
+    }
+
+    function bindSavedRecordToTab(tabId, rowIndex) {
+      const tab = tabs.find(t => t.id === tabId);
+      if (!tab) return;
+      tab.rowIndex = rowIndex;
+      saveTabs();
+    }
+
+    function shiftIndexesAfterDelete(deletedRowIndex) {
+      const nextTimerState = {};
+      Object.entries(timerState).forEach(([key, value]) => {
+        const rowIndex = Number(key);
+        if (!Number.isFinite(rowIndex) || rowIndex === deletedRowIndex) return;
+        nextTimerState[rowIndex > deletedRowIndex ? rowIndex - 1 : rowIndex] = value;
+      });
+      timerState = nextTimerState;
+      saveTS();
+
+      tabs.forEach(tab => {
+        if (!tab.rowIndex) return;
+        if (tab.rowIndex === deletedRowIndex) tab.rowIndex = null;
+        else if (tab.rowIndex > deletedRowIndex) tab.rowIndex -= 1;
+      });
+      saveTabs();
+    }
+
+    function ensureEditableTab() {
+      if (!tabs.length) {
+        activeTabId = newTabData();
+        saveTabs();
+      }
+      return getActiveTab();
+    }
+
+    function closeTabAfterSave(tabId) {
+      const idx = tabs.findIndex(t => t.id === tabId);
+      if (idx < 0) return;
+      tabs.splice(idx, 1);
+      if (!tabs.length) {
+        activeTabId = newTabData();
+      } else if (activeTabId === tabId) {
+        activeTabId = tabs[Math.min(idx, tabs.length - 1)].id;
+      }
+      saveTabs();
+      renderTabs();
+      loadTabIntoForm(getActiveTab());
+      focusPrimaryField();
+    }
+
+    function openRecordInHeader(record) {
+      const existing = tabs.find(t => t.rowIndex === record.row_index);
+      if (existing) {
+        existing.protocolo = record.protocolo || "";
+        existing.circuito = record.circuito || "";
+        existing.cliente = record.cliente || "";
+        existing.serial = record.serial || "";
+        existing.tratativa = record.tratativa || "";
+        existing.retorno = (record.status || "").toUpperCase().includes("AGUARDANDO_RETORNO");
+        updateTabLabel(existing);
+        activeTabId = existing.id;
+      } else {
+        const id = newTabData();
+        const tab = tabs.find(t => t.id === id);
+        tab.protocolo = record.protocolo || "";
+        tab.circuito = record.circuito || "";
+        tab.cliente = record.cliente || "";
+        tab.serial = record.serial || "";
+        tab.tratativa = record.tratativa || "";
+        tab.retorno = (record.status || "").toUpperCase().includes("AGUARDANDO_RETORNO");
+        tab.rowIndex = record.row_index;
+        updateTabLabel(tab);
+        activeTabId = id;
+      }
+      saveTabs();
+      renderTabs();
+      loadTabIntoForm(getActiveTab());
+      focusPrimaryField();
+      document.querySelector(".os-tab.active")?.scrollIntoView({ behavior:"smooth", inline:"center", block:"nearest" });
+    }
+
+    function getTodayRecordFromRowElement(rowEl) {
+      const rowIndex = Number(rowEl?.dataset?.row);
+      if (!Number.isFinite(rowIndex)) return null;
+
+      const values = { protocolo:"", circuito:"", cliente:"", serial:"", tratativa:"", status:"" };
+      rowEl.querySelectorAll(".edit-input").forEach(input => {
+        values[input.dataset.field] = input.value.trim();
+      });
+
+      return {
+        row_index: rowIndex,
+        protocolo: values.protocolo,
+        circuito: values.circuito,
+        cliente: values.cliente,
+        serial: values.serial,
+        tratativa: values.tratativa,
+        status: values.status || rowEl.dataset.status || "",
+      };
+    }
+
+    function attachTodayRowInteraction(rowEl, record) {
+      if (!rowEl) return;
+      rowEl.onclick = (event) => {
+        if (event.target.closest(".today-actions, .edit-mode, .timer-area button")) return;
+        const rowRecord = record || getTodayRecordFromRowElement(rowEl);
+        if (rowRecord) openRecordInHeader(rowRecord);
+      };
+    }
+
+    function updateTabLabel(tab) {
+      const p = (tab.protocolo||"").trim();
+      const c = (tab.cliente||"").trim();
+      if (p)      tab.label = p.length > 14 ? p.slice(0,13)+"…" : p;
+      else if (c) tab.label = c.length > 14 ? c.slice(0,13)+"…" : c;
+      else        tab.label = "";
+    }
+
+    function getTabBannerState(tab) {
+      const values = [tab.protocolo, tab.circuito, tab.cliente, tab.serial, tab.tratativa]
+        .map(v => (v || "").trim())
+        .filter(Boolean);
+      const hasContent = values.length > 0;
+      const isSaved = Number.isFinite(Number(tab.rowIndex)) && Number(tab.rowIndex) > 0;
+      if (isSaved) {
+        return {
+          cardClass: "is-reopened",
+          kicker: "Edicao ativa",
+          title: tab.protocolo ? `OS ${tab.protocolo} reaberta para ajuste` : "Registro reaberto para ajuste",
+          text: "As alteracoes feitas aqui ficam prontas para revisao, copia e novos ajustes durante o dia.",
+          tag: "Reaberta"
+        };
+      }
+      if (hasContent) {
+        return {
+          cardClass: "is-draft",
+          kicker: "Edicao ativa",
+          title: "Tratativa em andamento",
+          text: "Continue preenchendo os campos. Ao finalizar, a OS sai do cabecalho e continua disponivel em Registros de Hoje.",
+          tag: "Em preparo"
+        };
+      }
+      return {
+        cardClass: "is-empty",
+        kicker: "Area ativa",
+        title: "Nova tratativa pronta para preenchimento",
+        text: "Preencha os campos e finalize. Para revisar uma OS salva, clique em um item de Registros de Hoje.",
+        tag: "Rascunho"
+      };
+    }
+
+    function updateEditorBanner(tab) {
+      const banner = $("editorBanner");
+      const card = $("activeOsCard");
+      if (!banner || !card || !tab) return;
+      const state = getTabBannerState(tab);
+      banner.classList.remove("is-empty", "is-draft", "is-reopened");
+      card.classList.remove("is-empty", "is-draft", "is-reopened");
+      banner.classList.add(state.cardClass);
+      card.classList.add(state.cardClass);
+      $("editorBannerKicker").textContent = state.kicker;
+      $("editorBannerTitle").textContent = state.title;
+      $("editorBannerText").textContent = state.text;
+      $("editorBannerTag").textContent = state.tag;
+    }
+
+    function loadTabIntoForm(tab) {
+      $("protocolo").value = tab.protocolo || "";
+      $("circuito").value  = tab.circuito  || "";
+      $("cliente").value   = tab.cliente   || "";
+      $("serial").value    = tab.serial    || "";
+      $("tratativa").value = tab.tratativa || "";
+      _retornoSelecionado  = tab.retorno ?? null;
+      $("btnRetornoSim").classList.toggle("active", _retornoSelecionado === true);
+      $("btnRetornoNao").classList.toggle("active", _retornoSelecionado === false);
+      const titleEl = $("osCardTitle");
+      if (titleEl) {
+        const p = (tab.protocolo||"").trim();
+        titleEl.textContent = p ? `OS — ${p}` : "Dados do Atendimento";
+      }
+      updateEditorBanner(tab);
+    }
+
+    // ── Renderiza as abas ────────────────────────────────────
+    function renderTabs() {
+      const bar    = $("osTabsBar");
+      const addBtn = $("btnAddTab");
+      bar.querySelectorAll(".os-tab").forEach(el => el.remove());
+
+      tabs.forEach(tab => {
+        const el = document.createElement("button");
+        el.className   = "os-tab" + (tab.id === activeTabId ? " active" : "");
+        el.type        = "button";
+        el.dataset.tabId = tab.id;
+
+        // Cor da aba pelo estado do timer
+        if (tab.rowIndex) {
+          const st = timerState[tab.rowIndex];
+          if (st && !st.concluido) {
+            if (st.aguardandoAcao) el.classList.add("tab-red");
+            else {
+              const rem = Math.floor((st.endTs - Date.now()) / 1000);
+              if (rem <= WARN_THRESHOLD) el.classList.add("tab-warning");
+            }
+          } else if (st && st.concluido) {
+            el.classList.add("tab-done");
+          }
+        }
+
+        const mainEl = document.createElement("span");
+        mainEl.className = "os-tab-main";
+
+        const statusEl = document.createElement("span");
+        statusEl.className = "os-tab-status";
+        mainEl.appendChild(statusEl);
+
+        // Label
+        const labelEl = document.createElement("span");
+        labelEl.className   = "os-tab-label";
+        labelEl.textContent = tab.label || "OS";
+        mainEl.appendChild(labelEl);
+        el.appendChild(mainEl);
+
+        // Badge de timer na aba
+        if (tab.rowIndex) {
+          const st = timerState[tab.rowIndex];
+          if (st && !st.concluido && !st.aguardandoAcao) {
+            const badge = document.createElement("span");
+            badge.className   = "os-tab-timer";
+            badge.id          = `tab-timer-badge-${tab.id}`;
+            const rem = Math.max(0, Math.floor((st.endTs - Date.now()) / 1000));
+            badge.textContent = fmtSecs(rem);
+            el.appendChild(badge);
+          }
+        }
+
+        // Botão fechar
+        const closeBtn = document.createElement("span");
+        closeBtn.className   = "os-tab-close";
+        closeBtn.setAttribute("role", "button");
+        closeBtn.tabIndex    = -1;
+        closeBtn.textContent = "✕";
+        closeBtn.title       = "Fechar aba";
+        closeBtn.onclick     = (e) => { e.stopPropagation(); closeTab(tab.id); };
+        el.appendChild(closeBtn);
+
+        el.onclick = () => switchTab(tab.id);
+        bar.insertBefore(el, addBtn);
+      });
+    }
+
+    // ── Atualiza badges de timer a cada segundo ──────────────
+    setInterval(() => {
+      tabs.forEach(tab => {
+        if (!tab.rowIndex) return;
+        const st = timerState[tab.rowIndex];
+        const badge  = $(`tab-timer-badge-${tab.id}`);
+        const tabEl  = document.querySelector(`.os-tab[data-tab-id="${tab.id}"]`);
+        if (!tabEl) return;
+        tabEl.classList.remove("tab-warning","tab-red","tab-done");
+        if (st && !st.concluido && !st.aguardandoAcao) {
+          const rem = Math.max(0, Math.floor((st.endTs - Date.now()) / 1000));
+          if (badge) badge.textContent = fmtSecs(rem);
+          if (rem <= WARN_THRESHOLD) tabEl.classList.add("tab-warning");
+        } else if (st && st.aguardandoAcao) {
+          tabEl.classList.add("tab-red");
+        } else if (st && st.concluido) {
+          tabEl.classList.add("tab-done");
+        }
+      });
+    }, 1000);
+
+    function addTab() {
+      saveActiveTabFields();
+      const id = newTabData();
+      activeTabId = id;
+      saveTabs();
+      renderTabs();
+      loadTabIntoForm(getActiveTab());
+      focusPrimaryField();
+      document.querySelector(".os-tab.active")?.scrollIntoView({ behavior:"smooth", inline:"center", block:"nearest" });
+    }
+
+    function closeTab(id) {
+      if (tabs.length === 1) { clearAll(true); return; }
+      const idx = tabs.findIndex(t => t.id === id);
+      if (idx < 0) return;
+      tabs.splice(idx, 1);
+      if (activeTabId === id) activeTabId = tabs[Math.min(idx, tabs.length-1)].id;
+      saveTabs();
+      renderTabs();
+      loadTabIntoForm(getActiveTab());
+    }
+
+    function switchTab(id) {
+      saveActiveTabFields();
+      activeTabId = id;
+      saveTabs();
+      renderTabs();
+      loadTabIntoForm(getActiveTab());
+      document.querySelector(".os-tab.active")?.scrollIntoView({ behavior:"smooth", inline:"center", block:"nearest" });
+    }
+
+    // ══════════════════════════════════════════════════════════
+    // COR DO CARD
+    // ══════════════════════════════════════════════════════════
     function applyColor(rowIndex, cls) {
       const el = $(`today-row-${rowIndex}`);
       if (!el) return;
@@ -205,7 +761,9 @@
       if (cls) el.classList.add(cls);
     }
 
-    // ── ALERTA SONORO ────────────────────────────────────────
+    // ══════════════════════════════════════════════════════════
+    // ALERTA SONORO
+    // ══════════════════════════════════════════════════════════
     function playAlert() {
       try {
         const ctx = new (window.AudioContext||window.webkitAudioContext)();
@@ -221,8 +779,9 @@
       } catch {}
     }
 
-    // ── RENDERIZA ÁREA DO TIMER ──────────────────────────────
-    // Estados: rodando | aguardandoAcao | vazio
+    // ══════════════════════════════════════════════════════════
+    // RENDER TIMER AREA
+    // ══════════════════════════════════════════════════════════
     function renderTimerArea(rowIndex) {
       const area = $(`timer-area-${rowIndex}`);
       if (!area) return;
@@ -230,57 +789,47 @@
       if (!st || st.concluido) { area.innerHTML = ""; return; }
 
       if (st.aguardandoAcao) {
-        const semRetorno = st.tentativas === 0;          // OS salva com "Não" — nunca teve timer
-        const esgotado   = st.tentativas >= MAX_TENTATIVAS; // timer(es) esgotado(s)
-
+        const semRetorno = st.tentativas === 0;
+        const esgotado   = st.tentativas >= MAX_TENTATIVAS;
         if (semRetorno) {
-          // Caso "Precisa de retorno? Não" — apenas escolha de desfecho, sem contexto de timer
-          area.innerHTML = `
-            <div class="inline-action-block inline-action-block--red">
-              <span class="inline-action-label">Defina o desfecho desta OS:</span>
-              <div class="inline-action-btns">
-                <button class="btn-inline-retido" onclick="finalizarDesfecho(${rowIndex},'RETIDO')">✔ Retido</button>
-                <button class="btn-inline-campo"  onclick="finalizarDesfecho(${rowIndex},'CAMPO')">🔧 Enviado ao Campo</button>
-              </div>
-            </div>`;
+          area.innerHTML = `<div class="inline-action-block inline-action-block--red">
+            <span class="inline-action-label">Defina o desfecho desta OS:</span>
+            <div class="inline-action-btns">
+              <button class="btn-inline-retido" onclick="finalizarDesfecho(${rowIndex},'RETIDO')">✔ Retido</button>
+              <button class="btn-inline-campo"  onclick="finalizarDesfecho(${rowIndex},'CAMPO')">🔧 Enviado ao Campo</button>
+            </div></div>`;
         } else if (esgotado) {
-          // Todas as tentativas de retorno esgotadas
-          area.innerHTML = `
-            <div class="inline-action-block inline-action-block--red">
-              <span class="inline-action-label">⏰ ${MAX_TENTATIVAS}/${MAX_TENTATIVAS} tentativas encerradas — Qual o desfecho?</span>
-              <div class="inline-action-btns">
-                <button class="btn-inline-retido" onclick="finalizarDesfecho(${rowIndex},'RETIDO')">✔ Retido</button>
-                <button class="btn-inline-campo"  onclick="finalizarDesfecho(${rowIndex},'CAMPO')">🔧 Enviado ao Campo</button>
-              </div>
-            </div>`;
+          area.innerHTML = `<div class="inline-action-block inline-action-block--red">
+            <span class="inline-action-label">⏰ ${MAX_TENTATIVAS}/${MAX_TENTATIVAS} tentativas encerradas — Qual o desfecho?</span>
+            <div class="inline-action-btns">
+              <button class="btn-inline-retido" onclick="finalizarDesfecho(${rowIndex},'RETIDO')">✔ Retido</button>
+              <button class="btn-inline-campo"  onclick="finalizarDesfecho(${rowIndex},'CAMPO')">🔧 Enviado ao Campo</button>
+            </div></div>`;
         } else {
-          // Tentativa de retorno encerrada, ainda há mais disponíveis
-          area.innerHTML = `
-            <div class="inline-action-block inline-action-block--orange">
-              <span class="inline-action-label">⏰ Tentativa ${st.tentativas}/${MAX_TENTATIVAS} encerrada — Necessita mais um retorno?</span>
-              <div class="inline-action-btns">
-                <button class="btn-inline-sim"    onclick="iniciarNovoTimer(${rowIndex})">↺ Sim — +30 min</button>
-                <button class="btn-inline-retido" onclick="finalizarDesfecho(${rowIndex},'RETIDO')">✔ Retido</button>
-                <button class="btn-inline-campo"  onclick="finalizarDesfecho(${rowIndex},'CAMPO')">🔧 Campo</button>
-              </div>
-            </div>`;
+          area.innerHTML = `<div class="inline-action-block inline-action-block--orange">
+            <span class="inline-action-label">⏰ Tentativa ${st.tentativas}/${MAX_TENTATIVAS} encerrada — Necessita mais um retorno?</span>
+            <div class="inline-action-btns">
+              <button class="btn-inline-sim"    onclick="iniciarNovoTimer(${rowIndex})">↺ Sim — +30 min</button>
+              <button class="btn-inline-retido" onclick="finalizarDesfecho(${rowIndex},'RETIDO')">✔ Retido</button>
+              <button class="btn-inline-campo"  onclick="finalizarDesfecho(${rowIndex},'CAMPO')">🔧 Campo</button>
+            </div></div>`;
         }
         return;
       }
 
       const remaining = Math.max(0, Math.floor((st.endTs - Date.now()) / 1000));
-      area.innerHTML = `
-        <div class="timer-block">
-          <span class="timer-label" id="timer-label-${rowIndex}">Tentativa ${st.tentativas}/${MAX_TENTATIVAS} · Retorno em:</span>
-          <span class="timer-countdown" id="timer-countdown-${rowIndex}">${fmtSecs(remaining)}</span>
-          <div class="timer-early-btns">
-            <button class="btn-inline-retido" onclick="finalizarDesfechoAntecipado(${rowIndex},'RETIDO')">✔ Retido</button>
-            <button class="btn-inline-campo"  onclick="finalizarDesfechoAntecipado(${rowIndex},'CAMPO')">🔧 Campo</button>
-          </div>
-        </div>`;
+      area.innerHTML = `<div class="timer-block">
+        <span class="timer-label" id="timer-label-${rowIndex}">Tentativa ${st.tentativas}/${MAX_TENTATIVAS} · Retorno em:</span>
+        <span class="timer-countdown" id="timer-countdown-${rowIndex}">${fmtSecs(remaining)}</span>
+        <div class="timer-early-btns">
+          <button class="btn-inline-retido" onclick="finalizarDesfechoAntecipado(${rowIndex},'RETIDO')">✔ Retido</button>
+          <button class="btn-inline-campo"  onclick="finalizarDesfechoAntecipado(${rowIndex},'CAMPO')">🔧 Campo</button>
+        </div></div>`;
     }
 
-    // ── TICK ─────────────────────────────────────────────────
+    // ══════════════════════════════════════════════════════════
+    // TICK
+    // ══════════════════════════════════════════════════════════
     function tickTimer(rowIndex) {
       if (timerIntervals[rowIndex]) { clearInterval(timerIntervals[rowIndex]); delete timerIntervals[rowIndex]; }
       timerIntervals[rowIndex] = setInterval(() => {
@@ -289,132 +838,153 @@
         const remaining = Math.max(0, Math.floor((st.endTs - Date.now()) / 1000));
         const el = $(`timer-countdown-${rowIndex}`);
         if (el) el.textContent = fmtSecs(remaining);
-        if (remaining > WARN_THRESHOLD)      applyColor(rowIndex, "");
-        else if (remaining > 0)              applyColor(rowIndex, "item-yellow");
+        if (remaining > WARN_THRESHOLD)    applyColor(rowIndex, "");
+        else if (remaining > 0)            applyColor(rowIndex, "item-yellow");
         if (remaining <= 0) { clearInterval(timerIntervals[rowIndex]); delete timerIntervals[rowIndex]; onTimerExpired(rowIndex); }
       }, 1000);
     }
 
-    // ── TIMER EXPIROU ────────────────────────────────────────
     function onTimerExpired(rowIndex) {
-      const st = timerState[rowIndex];
-      if (!st) return;
-      st.aguardandoAcao = true;
-      saveTS();
-      applyColor(rowIndex, "item-red");
-      playAlert();
-      renderTimerArea(rowIndex);   // mostra botões inline
-      updateFavicon();
+      const st = timerState[rowIndex]; if (!st) return;
+      st.aguardandoAcao = true; saveTS();
+      applyColor(rowIndex, "item-red"); playAlert();
+      renderTimerArea(rowIndex); updateFavicon();
     }
 
-    // ── INICIA NOVO TIMER ────────────────────────────────────
     function iniciarNovoTimer(rowIndex) {
-      const st = timerState[rowIndex] || { tentativas: 0, concluido: false };
-      st.tentativas     = (st.tentativas||0) + 1;
-      st.endTs          = Date.now() + TIMER_DURATION * 1000;
-      st.concluido      = false;
-      st.aguardandoAcao = false;
-      timerState[rowIndex] = st;
-      saveTS();
-      applyColor(rowIndex, "");
-      renderTimerArea(rowIndex);
-      tickTimer(rowIndex);
-      updateFavicon();
+      const st = timerState[rowIndex] || { tentativas:0, concluido:false };
+      st.tentativas = (st.tentativas||0)+1;
+      st.endTs = Date.now() + TIMER_DURATION * 1000;
+      st.concluido = false; st.aguardandoAcao = false;
+      timerState[rowIndex] = st; saveTS();
+      applyColor(rowIndex,""); renderTimerArea(rowIndex); tickTimer(rowIndex); updateFavicon();
     }
 
-    // ── FINALIZA DESFECHO ANTECIPADO (cliente respondeu antes do timer) ──────
     async function finalizarDesfechoAntecipado(rowIndex, desfecho) {
-      // Interrompe o setInterval imediatamente
       if (timerIntervals[rowIndex]) { clearInterval(timerIntervals[rowIndex]); delete timerIntervals[rowIndex]; }
-      // Chama o fluxo normal de desfecho
       await finalizarDesfecho(rowIndex, desfecho);
     }
 
-    // ── FINALIZA DESFECHO ────────────────────────────────────
+    function syncClosedStatusUI(item, statusVal) {
+      if (!item) return;
+      const isRetido = (statusVal || "").toUpperCase().includes("RETIDO");
+      item.dataset.status = statusVal;
+      item.classList.add("item-green");
+      item.classList.remove("item-yellow", "item-red");
+
+      const meta = item.querySelector(".today-meta");
+      if (meta) {
+        meta.querySelectorAll(".status-flag").forEach(f => f.remove());
+        const flag = document.createElement("span");
+        flag.className = `status-flag ${isRetido ? "flag-retido" : "flag-campo"}`;
+        flag.textContent = isRetido ? "Retido" : "Campo";
+        meta.appendChild(flag);
+      }
+
+      const hs = item.querySelector('.edit-input[data-field="status"]');
+      if (hs) hs.value = statusVal;
+
+      const switcher = item.querySelector('[data-role="status-switcher"]');
+      if (switcher) {
+        switcher.hidden = false;
+        switcher.classList.toggle("is-retido", isRetido);
+        switcher.classList.toggle("is-campo", !isRetido);
+        switcher.querySelectorAll(".status-switcher-btn").forEach(btn => {
+          btn.classList.toggle("is-active", btn.dataset.desfecho === (isRetido ? "RETIDO" : "CAMPO"));
+        });
+      }
+    }
+
     async function finalizarDesfecho(rowIndex, desfecho) {
       const statusVal = desfecho === "RETIDO" ? "RETIDO" : "ENVIADO AO CAMPO";
-      if (timerState[rowIndex]) {
-        timerState[rowIndex].concluido = true;
-        timerState[rowIndex].aguardandoAcao = false;
-        saveTS();
-      }
-      if (timerIntervals[rowIndex]) { clearInterval(timerIntervals[rowIndex]); delete timerIntervals[rowIndex]; }
-
-      const area = $(`timer-area-${rowIndex}`);
-      if (area) area.innerHTML = "";
-      applyColor(rowIndex, "item-green");
-
       const item = $(`today-row-${rowIndex}`);
-      if (item) {
-        item.dataset.status = statusVal;
-        const meta = item.querySelector(".today-meta");
+      if (timerState[rowIndex]) { timerState[rowIndex].concluido=true; timerState[rowIndex].aguardandoAcao=false; saveTS(); }
+      if (timerIntervals[rowIndex]) { clearInterval(timerIntervals[rowIndex]); delete timerIntervals[rowIndex]; }
+      const area = $(`timer-area-${rowIndex}`); if (area) area.innerHTML = "";
+      applyColor(rowIndex,"item-green");
+      if (item) syncClosedStatusUI(item, statusVal);
+      renderTabs(); updateFavicon();
+      try { await fetch("/update-status",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({row_index:rowIndex,status:statusVal})}); } catch {}
+      await refreshStats();
+      showToast("ok",`OS marcada como: ${statusVal}`);
+      return;
+      const legacyItem = $(`today-row-${rowIndex}`);
+      if (legacyItem) {
+        legacyItem.dataset.status = statusVal;
+        const meta = legacyItem.querySelector(".today-meta");
         if (meta) {
-          meta.querySelectorAll(".status-flag").forEach(f => f.remove());
+          meta.querySelectorAll(".status-flag").forEach(f=>f.remove());
           const flag = document.createElement("span");
-          flag.className = `status-flag ${desfecho==="RETIDO" ? "flag-retido" : "flag-campo"}`;
+          flag.className   = `status-flag ${desfecho==="RETIDO"?"flag-retido":"flag-campo"}`;
           flag.textContent = desfecho==="RETIDO" ? "✔ Retido" : "🔧 Campo";
           meta.appendChild(flag);
         }
-        const hs = item.querySelector('.edit-input[data-field="status"]');
+        const hs = legacyItem.querySelector('.edit-input[data-field="status"]');
         if (hs) hs.value = statusVal;
       }
-
-      updateFavicon();
-
-      try {
-        await fetch("/update-status", {
-          method:"POST", headers:{"Content-Type":"application/json"},
-          body: JSON.stringify({ row_index: rowIndex, status: statusVal })
-        });
-      } catch {}
-
+      renderTabs(); updateFavicon();
+      try { await fetch("/update-status",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({row_index:rowIndex,status:statusVal})}); } catch {}
       await refreshStats();
-      showToast("ok", `OS marcada como: ${statusVal}`);
+      showToast("ok",`OS marcada como: ${statusVal}`);
     }
 
-    // ── BOOTSTRAP ────────────────────────────────────────────
+    // ══════════════════════════════════════════════════════════
+    // BOOTSTRAP
+    // ══════════════════════════════════════════════════════════
+    async function changeClosedStatus(rowIndex, desfecho, event) {
+      event?.stopPropagation();
+      const item = $(`today-row-${rowIndex}`);
+      if (!item) return;
+      const statusVal = desfecho === "RETIDO" ? "RETIDO" : "ENVIADO AO CAMPO";
+      syncClosedStatusUI(item, statusVal);
+      try {
+        await fetch("/update-status", {
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({row_index:rowIndex,status:statusVal})
+        });
+        await refreshStats();
+        showToast("ok", `Desfecho alterado para: ${desfecho === "RETIDO" ? "Retido" : "Campo"}`);
+      } catch {
+        showToast("err", "Nao foi possivel atualizar o desfecho.");
+      }
+    }
+
     function bootstrapTimers() {
       document.querySelectorAll(".today-item[data-row]").forEach(item => {
+        attachTodayRowInteraction(item);
         const rowIndex = parseInt(item.dataset.row);
         const status   = (item.dataset.status||"").toUpperCase();
-
-        if (status.includes("RETIDO") || status.includes("CAMPO")) {
-          applyColor(rowIndex, "item-green");
+        if (status.includes("RETIDO")||status.includes("CAMPO")) {
+          applyColor(rowIndex,"item-green");
           if (timerState[rowIndex]) { timerState[rowIndex].concluido=true; timerState[rowIndex].aguardandoAcao=false; saveTS(); }
           return;
         }
-
         const st = timerState[rowIndex];
-        if (!st || st.concluido) return;
-
-        if (st.aguardandoAcao) {
-          applyColor(rowIndex, "item-red");
-          renderTimerArea(rowIndex);
-          return;
-        }
-
+        if (!st||st.concluido) return;
+        if (st.aguardandoAcao) { applyColor(rowIndex,"item-red"); renderTimerArea(rowIndex); return; }
         const remaining = Math.floor((st.endTs - Date.now()) / 1000);
         if (remaining > 0) {
-          renderTimerArea(rowIndex);
-          tickTimer(rowIndex);
-          if (remaining <= WARN_THRESHOLD) applyColor(rowIndex, "item-yellow");
-        } else {
-          onTimerExpired(rowIndex);
-        }
+          renderTimerArea(rowIndex); tickTimer(rowIndex);
+          if (remaining <= WARN_THRESHOLD) applyColor(rowIndex,"item-yellow");
+        } else { onTimerExpired(rowIndex); }
       });
       updateFavicon();
     }
 
-    // ── SALVAR ───────────────────────────────────────────────
-    let _retornoSelecionado = null;
+    // ══════════════════════════════════════════════════════════
+    // RETORNO
+    // ══════════════════════════════════════════════════════════
     function setRetorno(sim) {
       _retornoSelecionado = sim;
       $("btnRetornoSim").classList.toggle("active", sim===true);
       $("btnRetornoNao").classList.toggle("active", sim===false);
+      saveActiveTabFields();
     }
 
-    const FIELDS = ["protocolo","circuito","cliente","serial","tratativa"];
-
+    // ══════════════════════════════════════════════════════════
+    // SALVAR
+    // ══════════════════════════════════════════════════════════
     async function save() {
       const btn = $("btnSave");
       const payload = {
@@ -425,7 +995,8 @@
       if (!payload.tratativa) { showToast("err","O campo TRATATIVA está vazio."); return; }
       if (_retornoSelecionado===null) { showToast("err","Selecione se a OS precisa de retorno (Sim ou Não)."); return; }
 
-      const precisaRetorno = _retornoSelecionado===true;
+      const precisaRetorno = _retornoSelecionado === true;
+      const currentTabId = activeTabId;
       payload.status = precisaRetorno ? "AGUARDANDO_RETORNO" : "";
 
       btn.disabled=true; btn.style.opacity=".7";
@@ -436,41 +1007,42 @@
           showToast("err", data.error||"Falha ao salvar.");
         } else {
           showToast("ok", data.message||"Registro salvo!");
-          FIELDS.forEach(id=>{ $(id).value=""; localStorage.removeItem(`gpon_${id}`); });
-          _retornoSelecionado=null;
-          $("btnRetornoSim").classList.remove("active");
-          $("btnRetornoNao").classList.remove("active");
+          const savedRowIndex = data.record?.row_index || null;
 
           if (!$("todayCard")) {
-            sessionStorage.setItem("gpon_post_save", JSON.stringify({precisaRetorno}));
+            sessionStorage.setItem("gpon_post_save", JSON.stringify({precisaRetorno, rowIndex:savedRowIndex, tabId:currentTabId}));
             location.reload(); return;
           }
 
           const newRecords = await reloadTodayRecords();
-          if (newRecords&&newRecords.length>0) {
+          if (newRecords && newRecords.length > 0) {
             await new Promise(r=>setTimeout(r,80));
-            const newest = newRecords[0];
-            if (precisaRetorno) {
+            const newest = savedRowIndex
+              ? (newRecords.find(r => r.row_index === savedRowIndex) || newRecords[0])
+              : newRecords[0];
+            // Vincula rowIndex à aba atual
+            if (newest?.row_index) bindSavedRecordToTab(currentTabId, newest.row_index);
+
+            if (precisaRetorno && newest?.row_index) {
               iniciarNovoTimer(newest.row_index);
-            } else {
-              // Sem retorno → mostra botões de desfecho inline imediatamente
-              timerState[newest.row_index] = { tentativas:0, concluido:false, aguardandoAcao:true, endTs:0 };
-              saveTS();
-              applyColor(newest.row_index, "item-red");
-              renderTimerArea(newest.row_index);
-              updateFavicon();
+            } else if (newest?.row_index) {
+              timerState[newest.row_index] = {tentativas:0,concluido:false,aguardandoAcao:true,endTs:0};
+              saveTS(); applyColor(newest.row_index,"item-red"); renderTimerArea(newest.row_index); updateFavicon();
             }
+            closeTabAfterSave(currentTabId);
+            // Abre nova aba automaticamente para a próxima OS
           }
         }
       } catch { showToast("err","Erro ao conectar no servidor local."); }
       finally { btn.disabled=false; btn.style.opacity="1"; }
     }
 
-    // ── RELOAD TODAY ─────────────────────────────────────────
+    // ══════════════════════════════════════════════════════════
+    // RELOAD TODAY
+    // ══════════════════════════════════════════════════════════
     async function reloadTodayRecords() {
       try {
-        const res  = await fetch("/today-records");
-        const data = await res.json();
+        const res=await fetch("/today-records"); const data=await res.json();
         if (data.ok&&data.records) {
           if (data.records.length===0) { const c=$("todayCard"); if(c) c.remove(); }
           else {
@@ -485,20 +1057,14 @@
     }
 
     async function refreshStats() {
-      try {
-        const res=await fetch("/today-records"); const data=await res.json();
-        if(data.ok&&data.stats) updateDayStats(data.stats);
-      } catch {}
+      try { const res=await fetch("/today-records"); const data=await res.json(); if(data.ok&&data.stats) updateDayStats(data.stats); } catch {}
     }
 
     function updateDayStats(s) {
       const set=(id,v)=>{const e=$(id);if(e)e.textContent=v;};
       set("statTotal",s.total); set("statRetidos",s.retidos); set("statCampo",s.campo); set("statPct",s.pct_retido+"%");
-      const pctBox = $("statPctBox");
-      if (pctBox) {
-        pctBox.classList.toggle("pct-green", s.pct_retido >= 40);
-        pctBox.classList.toggle("pct-red",   s.pct_retido <  40);
-      }
+      const pctBox=$("statPctBox");
+      if(pctBox){pctBox.classList.toggle("pct-green",s.pct_retido>=40);pctBox.classList.toggle("pct-red",s.pct_retido<40);}
     }
 
     function updateTodayList(records) {
@@ -510,7 +1076,6 @@
         let flagHtml="";
         if(su.includes("RETIDO")) flagHtml=`<span class="status-flag flag-retido">✔ Retido</span>`;
         else if(su.includes("CAMPO")) flagHtml=`<span class="status-flag flag-campo">🔧 Campo</span>`;
-
         const item=document.createElement("div");
         item.className=`today-item${isClosed?" item-green":""}`;
         item.id=`today-row-${r.row_index}`; item.dataset.row=r.row_index; item.dataset.status=r.status||"";
@@ -524,6 +1089,10 @@
                 ${r.circuito?`<span class="today-circuit">${escHtml(r.circuito)}</span>`:""}
                 ${r.serial?`<span class="today-serial">SN: ${escHtml(r.serial)}</span>`:""}
                 ${flagHtml}
+              </div>
+              <div class="today-hint">
+                <span class="today-hint-dot"></span>
+                Clique no card para reabrir no cabecalho e continuar a edicao.
               </div>
               <div class="today-tratativa">${escHtml(r.tratativa||"")}</div>
               <div class="timer-area" id="timer-area-${r.row_index}"></div>
@@ -544,51 +1113,42 @@
                 <button class="btn-icon" title="Editar"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
                 <button class="btn-icon danger" title="Deletar"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
               </div>
+              <div class="status-switcher ${su.includes("RETIDO") ? "is-retido" : su.includes("CAMPO") ? "is-campo" : ""}" data-role="status-switcher" ${isClosed ? "" : "hidden"}>
+                <span class="status-switcher-label">Desfecho</span>
+                <button type="button" class="status-switcher-btn ${su.includes("RETIDO") ? "is-active" : ""}" data-desfecho="RETIDO">Retido</button>
+                <button type="button" class="status-switcher-btn ${su.includes("CAMPO") ? "is-active" : ""}" data-desfecho="CAMPO">Campo</button>
+              </div>
               <div class="edit-mode" style="display:none;gap:6px;margin-top:8px;">
                 <button class="btn-icon primary" title="Salvar"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></button>
                 <button class="btn-icon" title="Cancelar"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
               </div>
             </div>
           </div>`;
-
         const vb=item.querySelectorAll(".view-mode button");
         vb[0].onclick=()=>copyTodayRow(r.row_index); vb[1].onclick=()=>editTodayRow(r.row_index); vb[2].onclick=()=>deleteTodayRow(r.row_index);
         const eb=item.querySelectorAll(".edit-mode button");
         eb[0].onclick=()=>saveTodayRow(r.row_index); eb[1].onclick=()=>cancelTodayEdit(r.row_index);
+        item.querySelectorAll(".status-switcher-btn").forEach(btn => {
+          btn.onclick = (event) => changeClosedStatus(r.row_index, btn.dataset.desfecho, event);
+        });
+        attachTodayRowInteraction(item, r);
         list.appendChild(item);
-
-        // Guarda o rowIndex para reaplica estado após toda a lista estar no DOM
-        item._rowIndexGpon = r.row_index;
-        item._isClosedGpon = isClosed;
+        item._rowIndexGpon=r.row_index; item._isClosedGpon=isClosed;
       });
-
-      // Reaplica cores e timer-areas DEPOIS de toda a lista estar montada no DOM
-      list.querySelectorAll(".today-item[data-row]").forEach(item => {
-        const rowIndex = item._rowIndexGpon;
-        const isClosed = item._isClosedGpon;
-        if (isClosed) {
-          applyColor(rowIndex, "item-green");
-          return;
-        }
-        const st = timerState[rowIndex];
-        if (!st || st.concluido) return;
-        if (st.aguardandoAcao) {
-          applyColor(rowIndex, "item-red");
-          renderTimerArea(rowIndex);
-        } else {
-          renderTimerArea(rowIndex);
-          // Reinicia o tick pois o elemento do contador foi recriado no DOM
-          tickTimer(rowIndex);
-          const rem = Math.max(0, Math.floor((st.endTs - Date.now()) / 1000));
-          if (rem <= WARN_THRESHOLD) applyColor(rowIndex, "item-yellow");
-        }
+      list.querySelectorAll(".today-item[data-row]").forEach(item=>{
+        const rowIndex=item._rowIndexGpon; const isClosed=item._isClosedGpon;
+        if(isClosed){applyColor(rowIndex,"item-green");return;}
+        const st=timerState[rowIndex]; if(!st||st.concluido) return;
+        if(st.aguardandoAcao){applyColor(rowIndex,"item-red");renderTimerArea(rowIndex);}
+        else{renderTimerArea(rowIndex);tickTimer(rowIndex);const rem=Math.max(0,Math.floor((st.endTs-Date.now())/1000));if(rem<=WARN_THRESHOLD)applyColor(rowIndex,"item-yellow");}
       });
-
       const sub=$("todaySubtitle");
-      if(sub){ const d=new Date(); sub.textContent=`${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}/${d.getFullYear()} • ${records.length} atendimento${records.length!==1?"s":""}`; }
+      if(sub){const d=new Date();sub.textContent=`${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}/${d.getFullYear()} • ${records.length} atendimento${records.length!==1?"s":""}`;}
     }
 
-    // ── PÓS-RELOAD ───────────────────────────────────────────
+    // ══════════════════════════════════════════════════════════
+    // PÓS-RELOAD
+    // ══════════════════════════════════════════════════════════
     async function checkPostSaveIntent() {
       const raw=sessionStorage.getItem("gpon_post_save"); if(!raw) return;
       sessionStorage.removeItem("gpon_post_save");
@@ -596,18 +1156,20 @@
       try {
         const res=await fetch("/today-records"); const data=await res.json();
         if(!data.ok||!data.records||!data.records.length) return;
-        const newest=data.records[0];
+        const newest=intent.rowIndex
+          ? (data.records.find(r => r.row_index === intent.rowIndex) || data.records[0])
+          : data.records[0];
         await new Promise(r=>setTimeout(r,150));
-        if(intent.precisaRetorno) {
-          iniciarNovoTimer(newest.row_index);
-        } else {
-          timerState[newest.row_index]={tentativas:0,concluido:false,aguardandoAcao:true,endTs:0};
-          saveTS(); applyColor(newest.row_index,"item-red"); renderTimerArea(newest.row_index); updateFavicon();
-        }
+        if (newest?.row_index && intent.tabId) bindSavedRecordToTab(intent.tabId, newest.row_index);
+        if(intent.precisaRetorno && newest?.row_index) { iniciarNovoTimer(newest.row_index); }
+        else if (newest?.row_index) { timerState[newest.row_index]={tentativas:0,concluido:false,aguardandoAcao:true,endTs:0}; saveTS();applyColor(newest.row_index,"item-red");renderTimerArea(newest.row_index);updateFavicon(); }
+        closeTabAfterSave(intent.tabId);
       } catch {}
     }
 
-    // ── TOAST ────────────────────────────────────────────────
+    // ══════════════════════════════════════════════════════════
+    // TOAST
+    // ══════════════════════════════════════════════════════════
     function showToast(kind,msg) {
       const ok=$("toastOk"),err=$("toastErr");
       ok.style.display="none"; ok.classList.remove("ok");
@@ -617,14 +1179,10 @@
       setTimeout(()=>{ok.style.display="none";err.style.display="none";},5000);
     }
 
-    // ── LOCALSTORAGE ─────────────────────────────────────────
-    function saveToLS(){FIELDS.forEach(id=>localStorage.setItem(`gpon_${id}`,$(id).value));}
-    function loadFromLS(){FIELDS.forEach(id=>{const v=localStorage.getItem(`gpon_${id}`);if(v!==null)$(id).value=v;});}
-
-    window.addEventListener("DOMContentLoaded",()=>{ loadFromLS(); bootstrapTimers(); checkPostSaveIntent(); });
-    FIELDS.forEach(id=>$(id).addEventListener("input",saveToLS));
-
-    function buildCopyText(){
+    // ══════════════════════════════════════════════════════════
+    // COPIAR
+    // ══════════════════════════════════════════════════════════
+    function buildCopyText() {
       const s = $("serial").value.trim();
       const t = $("tratativa").value.trim();
       const parts = [];
@@ -633,35 +1191,43 @@
       return parts.join("  |  ");
     }
 
-    async function copyAll(){
+    async function copyAll() {
       if(!$("tratativa").value.trim()){showToast("err","Nada para copiar.");return;}
       try{await navigator.clipboard.writeText(buildCopyText());}
       catch{const ta=document.createElement("textarea");ta.value=buildCopyText();document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();}
       showToast("ok","Texto copiado!");
     }
 
-    function clearAll(){
-      if(FIELDS.some(id=>$(id).value.trim())&&!confirm("Deseja limpar todos os campos?"))return;
-      FIELDS.forEach(id=>{$(id).value="";localStorage.removeItem(`gpon_${id}`);});
-      _retornoSelecionado=null; $("btnRetornoSim").classList.remove("active"); $("btnRetornoNao").classList.remove("active");
-      showToast("ok","Campos limpos."); $("protocolo").focus();
+    // ══════════════════════════════════════════════════════════
+    // LIMPAR ABA
+    // ══════════════════════════════════════════════════════════
+    function clearAll(force) {
+      if(!force && FIELDS.some(id=>$(id).value.trim()) && !confirm("Deseja limpar os campos desta aba?")) return;
+      FIELDS.forEach(id=>{ $(id).value=""; });
+      _retornoSelecionado=null;
+      $("btnRetornoSim").classList.remove("active");
+      $("btnRetornoNao").classList.remove("active");
+      const tab=getActiveTab();
+      if(tab){tab.protocolo="";tab.circuito="";tab.cliente="";tab.serial="";tab.tratativa="";tab.retorno=null;tab.rowIndex=null;tab.label="";saveTabs();renderTabs();}
+      const titleEl=$("osCardTitle"); if(titleEl) titleEl.textContent="Dados do Atendimento";
+      showToast("ok","Campos limpos."); focusPrimaryField();
     }
 
-    // ── EDIT TODAY ───────────────────────────────────────────
+    // ══════════════════════════════════════════════════════════
+    // EDIT TODAY RECORDS
+    // ══════════════════════════════════════════════════════════
     let todayOriginalValues={};
 
     async function copyTodayRow(rowIndex){
-      const row=$(`today-row-${rowIndex}`);
-      let p="",ci="",cl="",s="",t="";
+      const row=$(`today-row-${rowIndex}`); let s="",t="";
       row.querySelectorAll(".edit-input").forEach(i=>{
-        if(i.dataset.field==="protocolo")p=i.value.trim(); if(i.dataset.field==="circuito")ci=i.value.trim();
-        if(i.dataset.field==="cliente")cl=i.value.trim();  if(i.dataset.field==="serial")s=i.value.trim();
+        if(i.dataset.field==="serial")s=i.value.trim();
         if(i.dataset.field==="tratativa")t=i.value.trim();
       });
-      const parts = [];
-      if (s)  parts.push(`Serial: ${s}`);
-      if (t)  parts.push(t);
-      const text = parts.join("  |  ");
+      const parts=[];
+      if(s) parts.push(`Serial: ${s}`);
+      if(t) parts.push(t);
+      const text=parts.join("  |  ");
       try{await navigator.clipboard.writeText(text);}
       catch{const ta=document.createElement("textarea");ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();}
       showToast("ok","Registro copiado!");
@@ -673,7 +1239,7 @@
       row.querySelectorAll(".edit-input").forEach(i=>{todayOriginalValues[rowIndex][i.dataset.field]=i.value;});
       row.querySelectorAll(".view-mode").forEach(e=>e.style.display="none");
       row.querySelectorAll(".edit-mode").forEach(e=>e.style.display="block");
-      row.style.background="var(--blue-light)";
+      row.style.background="var(--green-light)";
     }
 
     function cancelTodayEdit(rowIndex){
@@ -706,47 +1272,69 @@
           row.style.transition="all .3s";row.style.opacity="0";row.style.transform="translateX(-30px)";
           setTimeout(()=>{row.remove();if(!document.querySelectorAll(".today-item").length)setTimeout(()=>location.reload(),400);},300);
           if(timerIntervals[rowIndex])clearInterval(timerIntervals[rowIndex]);
-          delete timerState[rowIndex];saveTS();updateFavicon();
+          delete timerState[rowIndex];
+          shiftIndexesAfterDelete(rowIndex);
+          renderTabs();
+          updateFavicon();
           await refreshStats();
         }else showToast("err",data.error||"Erro.");
       }catch{showToast("err","Erro ao conectar.");}
     }
 
-    // ── EVENT LISTENERS ──────────────────────────────────────
-    $("btnSave").addEventListener("click",save);
-    $("btnCopy").addEventListener("click",copyAll);
-    $("btnClear").addEventListener("click",clearAll);
-    document.addEventListener("keydown",e=>{
-      const k=e.key.toLowerCase();
-      if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&k==="s"){e.preventDefault();save();}
-      if((e.ctrlKey||e.metaKey)&&k==="l"){e.preventDefault();clearAll();}
-      if((e.ctrlKey||e.metaKey)&&e.shiftKey&&k==="c"){e.preventDefault();copyAll();}
+    // ══════════════════════════════════════════════════════════
+    // ATALHOS DE TECLADO
+    // ══════════════════════════════════════════════════════════
+    document.addEventListener("keydown", e => {
+      const k = e.key.toLowerCase();
+      if ((e.ctrlKey||e.metaKey) && !e.shiftKey && k==="s")  { e.preventDefault(); save(); }
+      if ((e.ctrlKey||e.metaKey) && k==="l")                  { e.preventDefault(); clearAll(); }
+      if ((e.ctrlKey||e.metaKey) && e.shiftKey && k==="c")    { e.preventDefault(); copyAll(); }
     });
 
-    // ── DARK MODE ────────────────────────────────────────────
+    // ══════════════════════════════════════════════════════════
+    // AUTO-SAVE AO DIGITAR
+    // ══════════════════════════════════════════════════════════
+    FIELDS.forEach(id => {
+      $(id).addEventListener("input", () => { saveActiveTabFields(); renderTabs(); });
+    });
+
+    // ══════════════════════════════════════════════════════════
+    // BOTÕES
+    // ══════════════════════════════════════════════════════════
+    $("btnSave").addEventListener("click", save);
+    $("btnCopy").addEventListener("click", copyAll);
+    $("btnClear").addEventListener("click", () => clearAll());
+
+    // ══════════════════════════════════════════════════════════
+    // DARK MODE
+    // ══════════════════════════════════════════════════════════
     function toggleDark() {
-      const isDark = document.body.classList.toggle("dark");
-      localStorage.setItem("gpon_dark", isDark ? "1" : "0");
+      const isDark=document.body.classList.toggle("dark");
+      localStorage.setItem("gpon_dark",isDark?"1":"0");
       updateDarkBtn(isDark);
     }
     function updateDarkBtn(isDark) {
-      const lbl  = document.getElementById("darkLabel");
-      const icon = document.getElementById("darkIcon");
-      if (!lbl || !icon) return;
-      if (isDark) {
-        lbl.textContent = "Claro";
-        icon.innerHTML  = '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
-      } else {
-        lbl.textContent = "Escuro";
-        icon.innerHTML  = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
-      }
+      const lbl=document.getElementById("darkLabel"); const icon=document.getElementById("darkIcon");
+      if(!lbl||!icon) return;
+      if(isDark){ lbl.textContent="Claro"; icon.innerHTML='<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>'; }
+      else { lbl.textContent="Escuro"; icon.innerHTML='<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>'; }
     }
-    (function() {
-      const saved = localStorage.getItem("gpon_dark");
-      if (saved === "1") { document.body.classList.add("dark"); updateDarkBtn(true); }
-    })();
+    (function(){ const saved=localStorage.getItem("gpon_dark"); if(saved==="1"){document.body.classList.add("dark");updateDarkBtn(true);} })();
 
-    function openPopup(){window.open(window.location.href,"GPON_Popup","width=560,height=820,resizable=yes,scrollbars=yes");}
+    function openPopup(){ window.open(window.location.href,"GPON_Popup","width=560,height=820,resizable=yes,scrollbars=yes"); }
+
+    // ══════════════════════════════════════════════════════════
+    // INIT
+    // ══════════════════════════════════════════════════════════
+    window.addEventListener("DOMContentLoaded", () => {
+      loadTabs();
+      normalizeTabs();
+      renderTabs();
+      loadTabIntoForm(getActiveTab());
+      bootstrapTimers();
+      renderTabs();
+      checkPostSaveIntent();
+    });
   </script>
 </body>
 </html>

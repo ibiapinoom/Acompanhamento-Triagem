@@ -54,13 +54,15 @@ def ensure_excel_file() -> None:
 
 
 def append_row(protocolo: str, circuito: str, cliente: str, serial: str,
-               tratativa: str, status: str = "") -> None:
-    """Adiciona uma nova linha no Excel."""
+               tratativa: str, status: str = "") -> int:
+    """Adiciona uma nova linha no Excel e retorna o índice da linha criada."""
     wb = load_workbook(EXCEL_PATH)
     ws = wb[SHEET_NAME]
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     ws.append([timestamp, protocolo, circuito, cliente, serial, tratativa, status])
+    row_index = ws.max_row
     wb.save(EXCEL_PATH)
+    return row_index
 
 
 def _parse_dt(s: str) -> Optional[datetime]:
@@ -243,8 +245,20 @@ def save():
     if not tratativa:
         return jsonify({"ok": False, "error": "O campo TRATATIVA está vazio."}), 400
 
-    append_row(protocolo, circuito, cliente, serial, tratativa, status)
-    return jsonify({"ok": True, "message": "Registro salvo no Excel com sucesso."})
+    row_index = append_row(protocolo, circuito, cliente, serial, tratativa, status)
+    return jsonify({
+        "ok": True,
+        "message": "Registro salvo no Excel com sucesso.",
+        "record": {
+            "row_index": row_index,
+            "protocolo": protocolo,
+            "circuito": circuito,
+            "cliente": cliente,
+            "serial": serial,
+            "tratativa": tratativa,
+            "status": status,
+        }
+    })
 
 
 @app.post("/update")
